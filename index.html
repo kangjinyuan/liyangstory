@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/comment.css" />
+		<style type="text/css">
+			.index_nav li{width: 33% !important;}
+			.index_nav .icon{height: 90px !important;}
+		</style>
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="index">
+				<div class="indexbg">
+					<ul class="index_nav">
+						<li>
+							<div class="index-list">
+								<div class="icon songicon"></div>
+								<div class="tabtext">
+									<p>曲目</p>
+									<p>({{melodyCount}})</p>
+								</div>
+							</div>
+						</li>
+						<!--<li>
+							<div class="index-list">
+								<div class="icon classifyicon"></div>
+								<div class="tabtext">
+									<p>分类</p>
+									<p>({{classificationCount}})</p>
+								</div>
+							</div>
+						</li>-->
+						<li>
+							<div class="index-list">
+								<div class="icon albumicon"></div>
+								<div class="tabtext">
+									<p>专辑</p>
+									<p>({{albumCount}})</p>
+								</div>
+							</div>
+						</li>
+						<li>
+							<div class="index-list">
+								<div class="icon usericon"></div>
+								<div class="tabtext">
+									<p>用户</p>
+									<p>({{accountCount}})</p>
+								</div>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="js/jquery-1.9.1.min.js"></script>
+	<script src="js/vue.min.js"></script>
+	<script src="js/comment.js"></script>
+	<script src="js/echarts.min.js"></script>
+	<script>
+		var paras = {
+			melodyCount: "",
+			classificationCount: "",
+			albumCount: "",
+			accountCount: ""
+		}
+		loadvue(paras);
+
+		function loaddata() {
+			loadmaskpart("part/loadding", function() {
+				$.ajax({
+					type: "POST",
+					url: url + "mainpage/query.do",
+					contentType: "application/json; charset=utf-8",
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							setData.melodyCount = data.data.melodyCount;
+							setData.classificationCount = data.data.classificationCount;
+							setData.albumCount = data.data.albumCount;
+							setData.accountCount = data.data.accountCount;
+							removeloadding();
+						}
+					}
+				});
+			});
+		}
+		loaddata();
+	</script>
+
+</html>

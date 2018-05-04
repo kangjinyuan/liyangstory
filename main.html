@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>李扬故事汇后台管理系统</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="shortcut icon" href="img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/comment.css" />
+		<link rel="stylesheet" href="layui/css/layui.css" />
+		<link rel="stylesheet" href="layui/css/modules/layer/default/layer.css" />
+		<link rel="stylesheet" href="css/main.css" />
+	</head>
+
+	<body>
+		<div class="KJY">
+			<div class="header">
+				<div class="logo f_l">
+					<div class="text">李扬故事汇后台管理系统</div>
+				</div>
+				<div class="quit f_r" onclick="quit();">退出登录</div>
+			</div>
+			<div class="main">
+				<div class="mainLeft f_l">
+					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+					<ul class="layui-nav layui-nav-tree" lay-filter="test">
+						<li class="layui-nav-item layui-nav-itemed">
+							<a class="" href="javascript:;">内容管理</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a class="menu-icon1" data-page="pages/songMag" id="menua1">曲目管理</a>
+								</dd>
+								<!--<dd>
+									<a class="menu-icon2" data-page="pages/classifyMag" id="menua2">分类管理</a>
+								</dd>-->
+								<dd>
+									<a class="menu-icon3" data-page="pages/albumMag" id="menua3">专辑管理</a>
+								</dd>
+								<!--<dd>
+									<a class="menu-icon5" data-page="pages/findMag" id="menua4">发现管理</a>
+								</dd>-->
+								<dd>
+									<a class="menu-icon10" data-page="pages/bannerMag" id="menua5">轮播图管理</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a class="" href="javascript:;">用户中心</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a class="menu-icon4" data-page="pages/useMag" id="menub1">用户管理</a>
+								</dd>
+								<!--<dd>
+									<a class="menu-icon6" data-page="pages/useShare" id="menub2">分享记录管理</a>
+								</dd>
+								<dd>
+									<a class="menu-icon7" data-page="pages/useStorys" id="menub3">故事集管理</a>
+								</dd>-->
+								<!--<dd>
+									<a class="menu-icon8" data-page="pages/tradeMag" id="menub4">交易管理</a>
+								</dd>-->
+							</dl>
+						</li>
+					</ul>
+				</div>
+				<div class="mainRight f_r">
+					<div class="rightCon">
+						<div class="layui-tab" lay-filter="KJY" lay-allowclose="true">
+							<ul class="layui-tab-title top_tab" id="rightNav">
+								<li class="layui-this" lay-id="">首页</li>
+							</ul>
+							<div class="layui-tab-content" id="rightIframe">
+								<div class="layui-tab-item layui-show">
+									<iframe src='index.html' frameborder='0' marginheight='0' marginwidth='0' scrolling='yes' width='100%'></iframe>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="rightFooter">rightCopy &copy; 北京闪向科技有限公司</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	<script src="js/init.js"></script>
+	<script src="js/comment.js"></script>
+	<script type="text/javascript" src="layui/layui.js"></script>
+	<script type="text/javascript" src="layui/lay/modules/layer.js"></script>
+	<script type="text/javascript" src="js/rightNav.js"></script>
+
+</html>

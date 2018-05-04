@@ -1,0 +1,105 @@
+/*主页面的最外框*/
+.layui-layer-iframe{overflow: hidden !important;}
+.layui-layer-btn .layui-layer-btn0{background: #da423d !important;border: 1px solid #da423d !important;}
+.KJY{width: 100%;overflow: hidden;min-width: 1024px;}
+.KJYBOX{width: 100%;overflow: hidden;display: none;}
+/*首页*/
+.index{width: 100%;overflow:hidden;margin: 0px auto;}
+.indexbg{width: 100%;height: 100%;background: url(../img/indexbg.png) no-repeat;background-size:100% 100%;position: absolute;top: 0px;left: 0px;}
+.index_nav{width:400px;padding:8px;overflow:hidden;position: absolute;top: 0;right: 0;margin: auto auto;}
+.index_nav li{width:25%;overflow:hidden;float: left;cursor: pointer;position: relative;}
+.index_nav .index-list{width: 90%;margin:0px auto;height: 150px;}
+.index_nav .icon{width: 100%;height: 70px;background-repeat: no-repeat;background-position: center center;background-size: 100% 100%;}
+.index_nav .songicon{background-image: url(../img/songicon.png);}
+.index_nav .classifyicon{background-image: url(../img/classifyicon.png);}
+.index_nav .albumicon{background-image: url(../img/albumicon.png);}
+.index_nav .usericon{background-image: url(../img/usericon.png);}
+.index_nav .tabtext{width: 100%;margin:0px auto;overflow: hidden;background: #fff;}
+.index_nav .tabtext p:nth-child(1){width: 100%;overflow:hidden;font: 18px/28px 黑体;color: #333;text-align: center;}
+.index_nav .tabtext p:nth-child(2){width: 100%;height:20px;overflow:hidden;font: 16px 黑体;color: #666;text-align: center;}
+
+/*内容区*/
+.KJY_title,.mask_title{width:100%;margin:0px auto;background:#fafafa;height: 40px;font:bold 16px/40px 黑体;color: #333;text-indent: 20px;position: relative;}
+/*搜索部分*/
+.searchbox{width: 100%;overflow: hidden;border-bottom: 1px dashed #ccc;}
+.search_text{width: 100%;overflow: hidden;padding:8px 0px;}
+.search{width: 20%;height: 22px;float: left;}
+.main_mask .search{width: 50%;} 
+.search .searchname{width: 30%;float:left;height: 100%;font: 12px/22px 黑体;color: #333;text-align: right;}
+.search .searchvalue{width: 65%;margin-right:2%;float:right;height: 100%;}
+.search .searchvalue input{width:100%;height: 20px;border: 1px solid #ccc;border-radius:3px;font: 12px/22px 黑体;color: #333;text-indent: 10px;}
+.search .searchvalue select{width:100%;height: 22px;border: 1px solid #ccc;border-radius:3px;font: 12px/22px 黑体;color: #333;text-indent: 10px;}
+.search .searchvalue input:focus,.search .searchvalue select:focus{border:1px solid #da423d;}
+/*搜索按钮区域*/
+.btnbox{width: 96%;margin:0px auto;overflow: hidden;padding: 8px 0px;}
+.bannerbtnbox{width: 98%;margin:0px auto;overflow: hidden;padding-bottom:8px;}
+.btn{cursor:pointer;padding: 0px 10px;font: 12px/22px 黑体;color: #fff;border-radius:3px;background: #da423d;float: left;margin-right: 10px;}
+.btnbox .btn:last-child{margin-right: 0px;}
+.btn:hover{background: #da5955;}
+.search_btnbox .btn:last-child{margin: 0px;}
+/*表格区域*/
+.KJY_table{width: 98%;min-height:350px;overflow:hidden;margin: 0px auto;border: 1px solid #ccc;position: relative;}
+.KJY_table table{width: 100%;overflow: hidden;}
+.KJY_table table thead,.KJY_table table tbody{width: 100%;overflow: hidden;}
+.KJY_table table tbody{min-height: 520px;position: relative;}
+.KJY_table table tr{cursor: pointer;}
+.KJY_table table th,.KJY_table table td{width: auto;min-width:30px;max-width:200px;height: 22px;font: 12px/22px 黑体;border-right:1px solid #ccc;border-bottom:1px solid #ccc;color: #333;padding:5px 10px;text-align: left;position: relative;}
+.KJY_table table tr th:last-child,.KJY_table table tr td:last-child{border-right: none;}
+.KJY_table table tbody tr:nth-child(odd){background: #fff;}
+.KJY_table table tbody tr:nth-child(even){background: #fafafa;}
+.KJY_table table .nocheck{cursor:pointer;width: 10px;height: 10px;background-color:#fff;background-repeat:no-repeat;background-position:center center;background-size:100% 100%;position: absolute;top: 8px;left: 5px;border: 1px solid #ccc;border-radius: 3px;}
+.KJY_table table .checked{background-image: url(../img/check.png);}
+.KJY_table .padding20{padding-left: 20px;}
+.headimg{width: 40px;height: 40px;border-radius: 3px;overflow: hidden;}
+.findimg{width: 100px;overflow: hidden;}
+.headimg img{width: 100%;height: 100%;}
+.findimg img{width: 100%;border-radius: 3px;}
+/*banner图管理*/
+.bannerbox,.mask-radio-box{width: 99%;padding: 8px 0px;margin:0px auto;overflow: hidden;}
+.bannerbox li{width: 25%;overflow:hidden;float: left;margin-bottom: 10px;}
+.bannerlist{width: 98%;overflow:hidden;border-radius: 3px;border: 1px solid #da423d;}
+.bannerlist .bannerimg{width: 100%;overflow: hidden;}
+.bannerimg img{width: 100%;}
+.bannerlist .bannercon{width: 98%;margin:0px auto;height: 100px;overflow: hidden;}
+.bannerlist .bannercon div{font: 12px/33px 黑体;color: #333;width: 100%;height: 33px;overflow: hidden;text-overflow:ellipsis;white-space: nowrap;}
+.bannerlist .bannercon .title{font:bold 12px/33px 黑体;color: #333;}
+.rnocheck{cursor:pointer;width: 10px;height: 10px;background: url(../img/rnocheck.png) no-repeat;background-size: 100% 100%;position: absolute;top: 10px;left: 5px;}
+.rchecked{background-image: url(../img/rchecked.png);}
+
+
+/*分页*/
+.page{width: 98%;height: 22px;margin:0px auto;position: relative;padding:8px 0px}
+.page div{width:auto;padding:0px 10px;height:22px;font:12px/22px 黑体;color:#333;float: left;cursor: pointer;}
+.page div:hover{color: #da423d;}
+.page .pageinput input{width: 40px;height: 20px;border: 1px solid #ccc;background:#fafafa;outline: none;border-radius: 5px;margin-left: 3px;margin-right: 3px;font: 14px/25px 黑体;color: #333;text-align: center;}
+.page .pageinput input:focus{background: #fff;}
+.page .pagedir{position: absolute;top: 0;bottom:0;right: 0px;margin:auto auto;}
+/*弹框*/
+.main_mask{width: 100%;padding:8px 0px;overflow: hidden;}
+.main_mask .con{width: 100%;padding:20px 0px;overflow: hidden;}
+.masklist{width: 100%;overflow:hidden;margin-bottom: 8px;}
+.masklist .masklistname{width: 15%;height: 100%;font: bold 12px/22px 黑体;color: #333;text-align: right;float: left;}
+.masklist .masklistname span{color: #c10000;}
+.masklist .masklistname .text{color: #333;}
+.masklist .masklistvalue{width: 75%;margin-left: 2%;overflow:hidden;float: left;}
+.masklist .masklistvalue img{width: 100px;height: 100px;border-radius: 3px;display: block;}
+.masklist .masklistvalue audio{width: 98%;height: 30px;border-radius: 3px;display: block;}
+.masklist .masklistvalue input{width:98%;height: 20px;border: 1px solid #ccc;border-radius:3px;font: 12px/22px 黑体;color: #333;text-indent: 10px;}
+.masklist .masklistvalue select{width:98.5%;height: 22px;border: 1px solid #ccc;border-radius:3px;font: 12px/22px 黑体;color: #333;text-indent: 10px;}
+.masklist .masklistvalue input:focus,.search .searchvalue select:focus{border:1px solid #da423d;}
+.masklist .masklistvalue textarea{width:98%;height: 100px;border: 1px solid #ccc;border-radius:3px;font: 12px/22px 黑体;color: #333;text-indent: 10px;}
+.masklist .masklist_prompt{width: 100%;overflow: hidden;font: 12px/22px 黑体;color: #c10000;}
+.maskbtnbox{width: 83%;overflow:hidden;float: right;margin-bottom: 8px;}
+.maskbtnbox .btn:last-child{margin-right: 0px;}
+.masklist .masklistvalue .smallip{width: 200px;}
+.masklist .masklistvalue .bigip{width: 500px;}
+.masklist .masklistvalue .bigipH{height: 60px;}
+#QRCode{width: 100px;height: 100px;}
+#QRCodesave{display:none;width: 100%;overflow: hidden;}
+.margintop8{margin-top:8px;}
+/*加载模板*/
+.loadding{width:100%;height: 100%;position: fixed;top: 0px;left: 0px;z-index:10;background-color:#fafafa;background-image:url(../img/loadding.gif);background-repeat: no-repeat;background-position: center center;background-size: 100px 100px;}
+/*无数据*/
+.nodata{width:100%;height: 100%;position: absolute;top: 0px;left: 0px;z-index:10;background-color:#fafafa;background-image:url(../img/nodata.png);background-repeat: no-repeat;background-position: center center;background-size: 200px auto;}
+/*未开放*/
+.noopen{width:100%;height: 100%;position: fixed;top: 0px;left: 0px;z-index:10;background-color:#fafafa;background-image:url(../img/noopen.png);background-repeat: no-repeat;background-position: center center;background-size: 200px auto;}

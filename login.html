@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/login.css" />
+	</head>
+
+	<body>
+		<div id="login">
+			<div class="login">
+				<div class="login_in">
+					<div class="login_header"></div>
+					<div class="login_con">
+						<div class="con_info">
+							<div class="con_info_name f_l">用户名:</div>
+							<div class="con_info_input f_r"><input type="text" value="" name="" id="username" /></div>
+						</div>
+						<div class="con_info">
+							<div class="con_info_name f_l">密&nbsp;&nbsp;码:</div>
+							<div class="con_info_input"><input type="password" value="" name="" id="password" /></div>
+						</div>
+						<div class="con_info">
+							<div class="con_info_name f_l">验证码:</div>
+							<div class="con_info_validate_text f_r" id="checkCode" onclick="createCode()"></div>
+							<div class="con_info_validate_input f_l"><input type="text" value="" name="" id="validate" /></div>
+						</div>
+					</div>
+					<div class="login_btn" id="login_btn"></div>
+				</div>
+				<div class="login_reflect"></div>
+			</div>
+		</div>
+	</body>
+	<script src="js/jquery-1.9.1.min.js"></script>
+	<script src="js/comment.js"></script>
+	<script src="layui/layui.all.js"></script>
+	<script src="js/login.js"></script>
+	<script>
+		createCode();
+	</script>
+
+</html>

@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+
+	<head>
+		<title>李扬故事汇后台管理系统</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="main_mask">
+				<div class="searchbox" v-if="type == '0'">
+					<div class="search_text">
+						<div class="search">
+							<div class="searchname">曲目名称：</div>
+							<div class="searchvalue">
+								<input type="text" name="" value="" id="blur" placeholder="输入曲目关键词" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="searchbox" v-if="type == '1'">
+					<div class="search_text">
+						<div class="search">
+							<div class="searchname">专辑名称：</div>
+							<div class="searchvalue">
+								<input type="text" name="" value="" id="blur" placeholder="输入专辑关键词" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div v-if="type == '0'" class="btnbox">
+					<div class="btn" v-on:click="loaddata(type);">查询</div>
+				</div>
+				<div v-if="type == '1'" class="btnbox">
+					<div class="btn" v-on:click="loaddata(type);">查询</div>
+				</div>
+				<div class="KJY_table">
+					<table>
+						<thead>
+							<th class="padding20">名称</th>
+							<th>创建时间</th>
+						</thead>
+						<tbody>
+							<tr v-if="type == '0'" v-for="(t,i) in datalist">
+								<td class="padding20">
+									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.melodyName}}</td>
+								<td>{{t.createTime | resetTime(t.createTime)}}</td>
+							</tr>
+							<tr v-if="type == '1'" v-for="(t,i) in datalist">
+								<td class="padding20">
+									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.albumName}}</td>
+								<td>{{t.createTime | resetTime(t.createTime)}}</td>
+							</tr>
+							<tr v-if="type == '2'" v-for="(t,i) in datalist">
+								<td class="padding20">
+									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.articleTitle}}</td>
+								<td>{{t.createTime | resetTime(t.createTime)}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="page">
+					<div onclick="maskfirstpage();">首页</div>
+					<div onclick="maskbeforepage();">上一页</div>
+					<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
+					<div>共<span id="allpage">{{pageSize}}</span>页</div>
+					<div onclick="masknextpage();">下一页</div>
+					<div onclick="masklastpage();">末页</div>
+				</div>
+				<div class="btnbox">
+					<div class="btn" onclick="setpartent();">确定</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/photoload.js"></script>
+	<script src="../js/photoloadinit.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/jquery.form.js"></script>
+	<script src="../js/comment.js"></script>
+	<script>
+		var paras = {
+			datalist: [],
+			datalen: "",
+			currentPage: "",
+			pageSize: "",
+			type: ""
+		}
+		loadvue(paras);
+
+		function setpartent() {
+			layer.alert('关联成功', function() {
+				$("#bannercon", window.parent.document).val(rchecktxt);
+				$("#bannerconid", window.parent.document).val(rcheck);
+				parent.layer.close(index);
+			});
+		}
+
+		function loaddata(ti) {
+			tabindex = ti;
+			loadmaskpart("../part/loadding", function() {
+				if(tabindex == 0) {
+					var paras = {
+						page: page,
+						blur: $("#blur").val()
+					};
+					paras = JSON.stringify(paras);
+
+					$.ajax({
+						type: "POST",
+						url: url + "melody/queryList.do",
+						contentType: "application/json; charset=utf-8",
+						dataType: 'json',
+						data: paras,
+						success: function(data) {
+							setData.type = '0';
+							var datalist = data.data.melodyList;
+							for(var i = 0; i < datalist.length; i++) {
+								datalist[i].isActive = false;
+							}
+							setData.datalist = datalist;
+							setData.currentPage = data.currentPage;
+							setData.pageSize = data.pageSize;
+							setData.datalen = data.data.melodyList.length;
+							removeloadding(data.data.melodyList.length);
+						}
+					});
+				} else if(tabindex == 1) {
+					var paras = {
+						page: page,
+						blur: $("#blur").val()
+					};
+					paras = JSON.stringify(paras);
+					$.ajax({
+						type: 'POST',
+						url: url + 'album/queryList.do',
+						contentType: "application/json;charset=UTF-8",
+						data: paras,
+						dataType: 'json',
+						success: function(data) {
+							setData.type = '1';
+							var datalist = data.data;
+							for(var i = 0; i < datalist.length; i++) {
+								datalist[i].isActive = false;
+							}
+							setData.datalist = datalist;
+							setData.currentPage = data.currentPage;
+							setData.pageSize = data.pageSize;
+							setData.datalen = data.data.length;
+							removeloadding(data.data.length);
+						}
+					});
+				} else if(tabindex == 2) {
+					var paras = {
+						page: page,
+					};
+					paras = JSON.stringify(paras);
+					$.ajax({
+						type: 'POST',
+						url: url + 'article/queryList.do',
+						contentType: "application/json;charset=UTF-8",
+						data: paras,
+						dataType: 'json',
+						success: function(data) {
+							setData.type = '2';
+							var datalist = data.data;
+							for(var i = 0; i < datalist.length; i++) {
+								datalist[i].isActive = false;
+							}
+							setData.datalist = datalist;
+							setData.currentPage = data.currentPage;
+							setData.pageSize = data.pageSize;
+							setData.datalen = data.data.length;
+							removeloadding(data.data.length);
+						}
+					});
+				}
+			});
+		}
+	</script>
+
+</html>

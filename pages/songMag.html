@@ -1,0 +1,262 @@
+<!doctype html>
+<html>
+
+	<head>
+		<title>李扬故事汇后台管理系统</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<!-- No Baidu Siteapp-->
+		<meta http-equiv="Cache-Control" content="no-siteapp" />
+		<!-- Add to homescreen for Chrome on Android -->
+		<meta name="mobile-web-app-capable" content="yes">
+		<!-- Add to homescreen for Safari on iOS -->
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="KJY_title">曲目管理</div>
+			<div class="searchbox">
+				<div class="search_text">
+					<!--<div class="search">
+						<div class="searchname">分类：</div>
+						<div class="searchvalue">
+							<select name="" id="melodyCategory" v-on:change="loaddata">
+								<option value="">请选择分类</option>
+								<option v-for="category in categoryList" v-bind:value="category">{{category}}</option>
+							</select>
+						</div>
+					</div>-->
+					<div class="search">
+						<div class="searchname">专辑：</div>
+						<div class="searchvalue">
+							<select name="" id="melodyAlbum" v-on:change="loaddata">
+								<option value="">请选择专辑</option>
+								<option v-for="album in albumList" v-bind:value="album">{{album}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="search">
+						<div class="searchname">精品分类：</div>
+						<div class="searchvalue">
+							<select name="" id="melodyPrecious" v-on:change="loaddata">
+								<option value="">请选择分类</option>
+								<option value="true">精品</option>
+								<option value="false">非精品</option>
+							</select>
+						</div>
+					</div>
+					<div class="search">
+						<div class="searchname">曲目名称：</div>
+						<div class="searchvalue">
+							<input type="text" name="" value="" id="blur" placeholder="输入曲目关键词" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn" onclick="loaddata();">查询</div>
+				<div class="btn" onclick="showmask(this,'新建曲目');">新建曲目</div>
+				<div class="btn" onclick="deldata();">删除</div>
+			</div>
+			<div class="KJY_table">
+				<table border="0" cellpadding="0" cellspacing="0">
+					<thead>
+						<tr>
+							<th class="padding20">
+								<div v-bind:class="['nocheck',allisActive?'checked':'']" v-on:click="allselectdata($event)"></div>序号</th>
+							<th>曲目名称</th>
+							<th>艺术家</th>
+							<!--<th>分类</th>-->
+							<th>专辑</th>
+							<th>曲目价格</th>
+							<th>播放次数</th>
+							<th>创建时间</th>
+							<th>修改时间</th>
+						</tr>
+						<tbody id="tbody">
+							<tr v-for="(t,i) in datalist" v-on:dblclick="seedata(t.id)">
+								<td class="padding20">
+									<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectdata($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}</td>
+								<td>{{t.melodyName}}</td>
+								<td>{{t.melodyArtist}}</td>
+								<!--<td>{{t.melodyCategory}}</td>-->
+								<td>{{t.melodyAlbum}}</td>
+								<td>{{t.melodyPrice}}</td>
+								<td>{{t.melodyPlayTimes}}</td>
+								<td>{{t.createTime | resetTime(t.createTime)}}</td>
+								<td>{{t.updateTime | resetTime(t.updateTime)}}</td>
+							</tr>
+						</tbody>
+					</thead>
+				</table>
+			</div>
+			<div class="page">
+				<div>每页显示<span>20</span>条记录</div>
+				<div onclick="firstpage();">首页</div>
+				<div onclick="beforepage();">上一页</div>
+				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
+				<div>共<span id="allpage">{{pageSize}}</span>页</div>
+				<div onclick="nextpage();">下一页</div>
+				<div onclick="lastpage();">末页</div>
+				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/jquery.qrcode.js"></script>
+	<script src="../js/utf.js"></script>
+	<script src="../js/jquery.form.js"></script>
+	<script src="../js/comment.js"></script>
+	<script>
+		var paras = {
+			albumList: [],
+			categoryList: [],
+			datalist: [],
+			datalen: "",
+			currentPage: "",
+			count: "",
+			pageSize: "",
+			allisActive: false
+		}
+		loadvue(paras);
+		//		新建弹出
+		function showmask(t, title) {
+			openmask("", "../part/songMagAE", title, "60%", "100%", function(layerdom, layerifame) {
+				layerifame[0].contentWindow.loadselect(function() {
+					layerdom.find("#creatsave").attr("onclick", "save();");
+					layerdom.find("#QRCodebox").hide()
+					layerdom.find("#QRCode").empty();
+				})
+			})
+		}
+		//		查看数据
+		function seedata(id) {
+			openmask(id, "../part/songMagAE", "编辑曲目", "60%", "100%", function(layerdom, layerifame) {
+				layerifame[0].contentWindow.loadselect(function() {
+					$('#QRCode').empty();
+					var paras = {
+						id: id
+					};
+					paras = JSON.stringify(paras);
+					var timestamp = new Date().getTime();
+					$.ajax({
+						type: 'POST',
+						url: url + 'melody/query.do',
+						contentType: "application/json;charset=UTF-8",
+						data: paras,
+						dataType: 'json',
+						success: function(data) {
+							if(data.state == true) {
+								layerdom.find("#Name").val(data.data.melodyName);
+								layerdom.find("#isPre").val(data.data.melodyPrecious);
+								layerdom.find("#Author").val(data.data.melodyAuthor);
+								layerdom.find("#Category").val(data.data.melodyCategory);
+								layerdom.find("#Artist").val(data.data.melodyArtist);
+								layerdom.find("#Album").val(data.data.melodyAlbum);
+								layerdom.find("#Tags").val(data.data.melodyTags);
+								layerdom.find("#melodySort").val(data.data.melodySort);
+								layerdom.find("#ages").val(data.data.melodyAgeStart + "-" + data.data.melodyAgeEnd);
+								layerdom.find("#Price").val(data.data.melodyPrice);
+								layerdom.find("#showImage").attr("src", url + data.data.melodyCoverImage+"?timestamp="+timestamp);
+								layerdom.find("#showImage").attr("alt", data.data.melodyCoverImage);
+								layerdom.find("#showsong").attr("src", url + data.data.melodyFilePath);
+								layerdom.find("#songtext").val(data.data.melodyFilePath);
+								layerdom.find("#creatsave").attr("onclick", "updata();");
+								layerdom.find("#QRCodesave").show();
+								layerdom.find("#QRCode").qrcode({
+									render: "canvas",
+									text: url + "share/player.html?melodyId=" + data.data.id + "&melodyAlbum=" + data.data.melodyAlbum,
+									width: "100", //二维码的宽度
+									height: "100", //二维码的高度
+									background: "#ffffff", //二维码的后景色
+									foreground: "#000000", //二维码的前景色
+								});
+							}
+						}
+					});
+				})
+
+			})
+		}
+
+		//删除数据
+		function deldata() {
+			if(delidList.length == 0) {
+				layer.msg("请选择要删除的数据")
+			} else {
+				layer.confirm('确定要删除此条数据吗？', {
+					btn: ['确定', '取消']
+				}, function() {
+					$.ajax({
+						type: 'POST',
+						url: url + 'melody/delete.do',
+						data: {
+							idList: delidList
+						},
+						dataType: 'json',
+						success: function(data) {
+							if(data.state == true) {
+								loaddata();
+								layer.closeAll('dialog');
+							} else {
+								layer.msg("删除失败");
+							}
+						}
+					})
+				}, function() {
+
+				});
+			}
+		}
+
+		function loaddata() {
+			loadmaskpart("../part/loadding", function() {
+				var melodyCategory = $("#melodyCategory").val();
+				var melodyAlbum = $("#melodyAlbum").val();
+				var paras = {
+					page: page,
+					blur: $("#blur").val(),
+					melodyCategory: melodyCategory,
+					melodyAlbum: melodyAlbum,
+					isPrecious: $("#melodyPrecious").val()
+				};
+				paras = JSON.stringify(paras);
+
+				$.ajax({
+					type: "POST",
+					url: url + "melody/queryList.do",
+					contentType: "application/json; charset=utf-8",
+					dataType: 'json',
+					data: paras,
+					success: function(data) {
+						setData.albumList = data.data.albumList;
+						setData.categoryList = data.data.categoryList;
+						var datalist = data.data.melodyList;
+						for(var i = 0; i < datalist.length; i++) {
+							datalist[i].isActive = false;
+						}
+						setData.allisActive = false;
+						setData.datalist = datalist;
+						setData.currentPage = data.currentPage;
+						setData.count = data.count;
+						setData.pageSize = data.pageSize;
+						setData.datalen = data.data.melodyList.length;
+						removeloadding(data.data.melodyList.length);
+					}
+				});
+			});
+		}
+
+		loaddata();
+	</script>
+
+</html>

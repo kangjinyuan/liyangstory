@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="KJY_title">轮播图管理</div>
+			<div class="btnbox">
+				<div class="btn" onclick="showmask(this,'新建banner');">新建轮播</div>
+			</div>
+			<div class="KJY_table">
+				<ul class="bannerbox">
+					<li v-for="t in datalist">
+						<div class="bannerlist">
+							<div class="bannerimg">
+								<img v-bind:src="t.bannerimg" v-bind:alt="t.bannerimg" onerror="this.src='../img/bannerbgimg.png'" />
+							</div>
+							<div class="bannercon">
+								<div><span class="title">标题：</span>{{t.contentTitle}}</div>
+								<div><span class="title">轮播图地址：</span>{{t.bannerimg}}</div>
+								<div><span class="title">创建时间：</span>{{t.createTime | resetTime(t.createTime)}}</div>
+							</div>
+							<div class="bannerbtnbox">
+								<div class="btn" v-on:click="seedata(t.id)">编辑</div>
+								<div class="btn" v-on:click="deldata(t.id)">删除</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/photoload.js"></script>
+	<script src="../js/photoloadinit.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/jquery.form.js"></script>
+	<script src="../js/comment.js"></script>
+	<script>
+		var paras = {
+			datalist: [],
+			datalen: ''
+		}
+		loadvue(paras);
+		//		新建弹出
+		function showmask(t, title) {
+			openmask("", "../part/bannerMagAE", title, "560px", "450px", function(layerdom) {
+				layerdom.find("#creatsave").attr("onclick", "save()");
+			})
+		}
+
+		//		查看数据
+		function seedata(id) {
+			openmask(id, "../part/bannerMagAE", "编辑banner", "560px", "450px", function(layerdom) {
+				var paras = {
+					id: id
+				};
+				paras = JSON.stringify(paras);
+				var timestamp = new Date().getTime();
+				$.ajax({
+					type: 'POST',
+					url: url + 'banner/query.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layerdom.find("#bannertab").val(data.data.contentType);
+							layerdom.find("#bannercon").val(data.data.contentTitle);
+							layerdom.find("#orderIndex").val(data.data.orderIndex);
+							layerdom.find("#bannerconid").val(data.data.contentId);
+							layerdom.find("#showImage").attr("src", url + data.data.bannerImage+"?timestamp="+timestamp);
+							layerdom.find("#showImage").attr("alt", data.data.bannerImage);
+							layerdom.find("#creatsave").attr("onclick", "updata()");
+						}
+					}
+				});
+			})
+		}
+		//删除数据
+		function deldata(id) {
+			delidList.push(id)
+			layer.confirm('确定要删除此条数据吗？', {
+				btn: ['确定', '取消']
+			}, function() {
+				$.ajax({
+					type: 'POST',
+					url: url + 'banner/delete.do',
+					data: {
+						idList: delidList
+					},
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							loaddata();
+							layer.closeAll('dialog');
+						} else {
+							layer.msg("删除失败");
+						}
+					}
+				})
+			}, function() {
+
+			});
+		}
+
+		function loaddata() {
+			loadmaskpart("../part/loadding", function() {
+				var paras = {};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'banner/queryList.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						var datalist = data.data;
+						var timestamp = new Date().getTime();
+						for(var i = 0; i < datalist.length; i++) {
+							var bannerimg = url + datalist[i].bannerImage + "?timestamp=" + timestamp;
+							datalist[i].bannerimg = bannerimg;
+						}
+						setData.datalist = data.data;
+						setData.datalen = data.data.length;
+						removeloadding(data.data.length);
+					}
+				});
+			})
+		}
+		loaddata();
+	</script>
+
+</html>

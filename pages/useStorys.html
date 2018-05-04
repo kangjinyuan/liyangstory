@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="KJY_title">故事集管理</div>
+			<div class="searchbox">
+				<div class="search_text">
+					<div class="search">
+						<div class="searchname">用户：</div>
+						<div class="searchvalue">
+							<input type="text" name="" value="" id="user" placeholder="请输入用户名称" />
+						</div>
+					</div>
+					<div class="search">
+						<div class="searchname">故事集：</div>
+						<div class="searchvalue">
+							<input type="text" name="" value="" id="storyname" placeholder="请输入故事集名称" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn" onclick="loaddata();">查询</div>
+			</div>
+			<div class="KJY_table">
+				<table>
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>故事集名称</th>
+							<th>创建时间</th>
+							<th>修改时间</th>
+						</tr>
+					</thead>
+					<tbody id="tbody">
+						<tr v-for="(t,i) in datalist">
+							<td>{{((currentPage-1)*20)+(i+1)}}</td>
+							<td>{{t.collectionName}}</td>
+							<td>{{t.createTime | resetTime(t.createTime)}}</td>
+							<td>{{t.updateTime | resetTime(t.updateTime)}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="page">
+				<div>每页显示<span>20</span>条记录</div>
+				<div onclick="firstpage();">首页</div>
+				<div onclick="beforepage();">上一页</div>
+				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
+				<div>共<span id="allpage">{{pageSize}}</span>页</div>
+				<div onclick="nextpage();">下一页</div>
+				<div onclick="lastpage();">末页</div>
+				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/comment.js"></script>
+	<script>
+		var paras = {
+			datalist: [],
+			datalen: "",
+			currentPage: "",
+			count: "",
+			pageSize: "",
+		}
+		loadvue(paras);
+
+		function loaddata() {
+			loadmaskpart("../part/loadding", function() {
+				var paras = {
+					page: page,
+					blur: $("#storyname").val(),
+					accountId: $("#user").val()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'app/accountStoryCollection/queryList.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						setData.datalist = data.data;
+						setData.currentPage = data.currentPage;
+						setData.count = data.count;
+						setData.pageSize = data.pageSize;
+						setData.datalen = data.data.length;
+						removeloadding(data.data.length);
+					}
+				});
+			})
+		}
+		loaddata();
+	</script>
+
+</html>

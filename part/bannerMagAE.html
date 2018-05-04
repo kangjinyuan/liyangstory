@@ -1,0 +1,153 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="main_mask">
+			<div class="con">
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">轮播图图片</span>：</div>
+					<div class="masklistvalue">
+						<img src="" alt="" id="showImage" onerror="this.src='../img/noimg.png'" class="requiredimg" />
+						<div class="btn margintop8" onclick="uploadimg(this);">本地上传</div>
+					</div>
+				</div>
+				<form method="post" action="" enctype="multipart/form-data" id="coverImage" style="display: none;">
+					<input type="text" name="fileName" id="Imagetext" value="" />
+					<input type="file" name="file" id="ImageFile" value="" onchange="subimtimgBtn();" />
+				</form>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">关联选项</span>：</div>
+					<div class="masklistvalue">
+						<select name="" id="bannertab" class="required smallip" onchange="changetab();">
+							<option value="">==请选择==</option>
+							<option value="0">曲目</option>
+							<option value="1">专辑</option>
+						</select>
+					</div>
+				</div>
+				<div class="maskbtnbox">
+					<div class="btn" onclick="showbannermaskAE();">选择关联内容</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">关联内容</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="bannercon" class="required" disabled="disabled" />
+						<input type="hidden" name="" value="" id="bannerconid" class="required" />
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">轮播排序</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="orderIndex" class="required smallip" />
+						<div class="masklist_prompt">越小越靠前</div>
+					</div>
+				</div>
+				<div class="maskbtnbox">
+					<div class="btn" onclick="save();" id="creatsave">确定</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/photoload.js"></script>
+	<script src="../js/photoloadinit.js"></script>
+	<script src="../js/uploadimg.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/jquery.form.js"></script>
+	<script src="../js/comment.js"></script>
+	<script>
+		function changetab() {
+			$("#bannercon").val("");
+			$("#bannerconid").val("");
+		}
+
+		function showbannermaskAE() {
+			var tabindex = $("#bannertab").val();
+			if(tabindex == "") {
+				layer.msg("请选择关联选项");
+				return false;
+			}
+			openmask("", "../part/bannermaskAE", "选择关联", "96%", "90%", function(layerdom, layerifame) {
+				layerifame[0].contentWindow.loaddata(tabindex);
+			});
+		}
+		//		新建song
+		function save() {
+			var checkI = checkInput();
+			if(checkI == true) {
+				var paras = {
+					bannerImage: $("#showImage").attr("alt"),
+					contentType: $("#bannertab").val(),
+					contentId: $("#bannerconid").val(),
+					contentTitle: $("#bannercon").val(),
+					orderIndex: $("#orderIndex").val()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'banner/add.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.alert('新建成功', function() {
+								parent.layer.close(index);
+								window.parent.loaddata();
+							});
+						} else {
+							layer.msg('新建失败');
+						}
+					}
+				});
+			}
+		}
+		//		修改数据
+		function updata() {
+			var checkI = checkInput();
+			if(checkI == true) {
+				var paras = {
+					id: $(".main_mask").attr("data-id"),
+					bannerImage: $("#showImage").attr("alt"),
+					contentType: $("#bannertab").val(),
+					contentId: $("#bannerconid").val(),
+					contentTitle: $("#bannercon").val(),
+					orderIndex: $("#orderIndex").val()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'banner/update.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.alert('修改成功', function() {
+								parent.layer.close(index);
+								window.parent.loaddata();
+							});
+						} else {
+							layer.msg("修改失败");
+						}
+					}
+				});
+			}
+		}
+	</script>
+
+</html>

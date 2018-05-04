@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="KJY_title">发现管理</div>
+			<div class="btnbox">
+				<div class="btn" onclick="showmask(this,'新建文章');">新建文章</div>
+			</div>
+			<div class="KJY_table">
+				<table>
+					<thead>
+						<tr>
+							<th>文章图片</th>
+							<th>作者</th>
+							<th>浏览量</th>
+							<th>创建时间</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="tbody">
+						<tr class='findtr' v-for="t in datalist">
+							<td>
+								<div class="findimg"><img v-bind:src="t.headimg" v-bind:alt="t.headimg" /></div>
+							</td>
+							<td>{{t.author}}</td>
+							<td>{{t.pageView}}</td>
+							<td>{{t.createTime | resetTime(t.createTime)}}</td>
+							<td>
+								<div class="btn" v-on:click="seedata(t.id)">修改</div>
+								<div class="btn" v-on:click="deldata(t.id)">删除</div>
+								<div class="btn" v-on:click="findrelease($event,t.id)">{{t.publishedtext}}</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="page">
+				<div>每页显示<span>20</span>条记录</div>
+				<div onclick="firstpage();">首页</div>
+				<div onclick="beforepage();">上一页</div>
+				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
+				<div>共<span id="allpage">{{pageSize}}</span>页</div>
+				<div onclick="nextpage();">下一页</div>
+				<div onclick="lastpage();">末页</div>
+				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/photoload.js"></script>
+	<script src="../js/init.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/comment.js"></script>
+	<script src="../js/jquery.form.js"></script>
+	<script>
+		var paras = {
+			datalist: [],
+			datalen: "",
+			currentPage: "",
+			count: "",
+			pageSize: "",
+		}
+		loadvue(paras);
+
+		function findrelease(event, id) {
+			var ev = event.currentTarget;
+			if($(ev).text() == "发布") {
+				var fabu = 1;
+				var paras = {
+					id: id,
+					isPublished: fabu
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'article/update.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.msg("发布成功");
+							loaddata();
+						} else {
+							layer.msg("发布失败");
+						}
+					}
+				});
+			} else if($(ev).text() == "下线") {
+				var fabu = 0;
+				var paras = {
+					id: id,
+					isPublished: fabu
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'article/update.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.msg("下线成功");
+							loaddata();
+						} else {
+							layer.msg("下线失败");
+						}
+					}
+				});
+			}
+		}
+		//		新建弹出
+		function showmask(t, title) {
+			openmask("", "../part/findMagAE", title, "60%", "95%", function(layerdom) {
+				layerdom.find("#creatsave").attr("onclick", "save()");
+			})
+		}
+		//		查看数据
+		function seedata(id) {
+			openmask(id, "../part/findMagAE", "编辑文章", "60%", "95%", function(layerdom) {
+				var paras = {
+					id: id
+				};
+				paras = JSON.stringify(paras);
+				var timestamp = new Date().getTime();
+				$.ajax({
+					type: 'POST',
+					url: url + 'article/query.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layerdom.find("#findtitle").val(data.data.articleTitle);
+							layerdom.find("#findAuthor").val(data.data.author);
+							layerdom.find("#showImage").attr("src", url + data.data.coverImageUrl + "?timestamp=" + timestamp);
+							layerdom.find("#showImage").attr("alt", data.data.coverImageUrl);
+							layerdom.find("#findzhaiyao").val(data.data.summary);
+							layerdom.find("#findOrder").val(data.data.articleSort);
+							layerdom.find(".layui-layedit iframe").contents().find("body").html(data.data.content);
+							layerdom.find("#creatsave").attr("onclick", "updata()");
+						}
+					}
+				});
+			})
+		}
+		//删除数据
+		function deldata(id) {
+			delidList.push(id);
+			layer.confirm('确定要删除此条数据吗？', {
+				btn: ['确定', '取消']
+			}, function() {
+				$.ajax({
+					type: 'POST',
+					url: url + 'article/delete.do',
+					data: {
+						idList: delidList
+					},
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							loaddata();
+							layer.closeAll('dialog');
+						} else {
+							layer.msg("删除失败");
+						}
+					}
+				})
+			}, function() {
+
+			});
+
+		}
+
+		function loaddata() {
+			loadmaskpart("../part/loadding", function() {
+				var paras = {
+					page: page
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'article/queryList.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						var datalist = data.data;
+						var timestamp = new Date().getTime();
+						for(var i = 0; i < datalist.length; i++) {
+							if(datalist[i].isPublished == "0") {
+								datalist[i].publishedtext = "发布";
+							} else {
+								datalist[i].publishedtext = "下线";
+							}
+							var headimg = url + datalist[i].coverImageUrl + "?timestamp=" + timestamp;
+							datalist[i].headimg = headimg
+						}
+						if(datalist.length == 0) {
+							setData.allisActive == false;
+						}
+						setData.datalist = datalist;
+						setData.currentPage = data.currentPage;
+						setData.count = data.count;
+						setData.pageSize = data.pageSize;
+						setData.datalen = data.data.length;
+						removeloadding(data.data.length);
+					}
+				});
+			})
+		}
+		loaddata();
+	</script>
+
+</html>

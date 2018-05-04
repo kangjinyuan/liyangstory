@@ -1,0 +1,173 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="main_mask">
+			<div class="con">
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">专辑名称</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="albumName" class="required textlength" />
+						<div class="masklist_prompt">不超过15个字</div>
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">是否精品</span>：</div>
+					<div class="masklistvalue">
+						<select name="" id="isPre" class="required smallip">
+							<option value="">是否精品</option>
+							<option value="1">是</option>
+							<option value="0">否</option>
+						</select>
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">专辑简介</span>：</div>
+					<div class="masklistvalue">
+						<textarea name="" rows="" cols="" id="albumAbstract" class="required bigipH"></textarea>
+					</div>
+				</div>
+				<!--<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">专辑分类</span>：</div>
+					<div class="masklistvalue">
+						<select name="" id="albumTag" class="smallip">
+							<option value="">请选择分类</option>
+						</select>
+					</div>
+				</div>-->
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">专辑排序</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="albumOrder" class="required smallip" />
+						<div class="masklist_prompt">越大越靠前</div>
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">专辑封面</span>：</div>
+					<div class="masklistvalue">
+						<img src="" alt="" id="showImage" onerror="this.src='../img/noimg.png'" class="requiredimg" />
+						<div class="btn margintop8" onclick="uploadimg(this);">本地上传</div>
+					</div>
+				</div>
+				<form method="post" action="" enctype="multipart/form-data" id="coverImage" style="display: none;">
+					<input type="text" name="fileName" id="Imagetext" value="" />
+					<input type="file" name="file" id="ImageFile" value="" onchange="subimtimgBtn();" />
+				</form>
+				<div class="maskbtnbox">
+					<div class="btn" onclick="save();" id="creatsave">确定</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/photoload.js"></script>
+	<script src="../js/photoloadinit.js"></script>
+	<script src="../js/uploadimg.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/jquery.form.js"></script>
+	<script src="../js/comment.js"></script>
+	<script>
+		//		新建song
+		function save() {
+			var checkI = checkInput();
+			if(checkI == true) {
+				var paras = {
+					albumName: $("#albumName").val(),
+					albumSort: $("#albumOrder").val(),
+					albumCoverImage: $("#showImage").attr("alt"),
+					albumPrecious: parseInt($("#isPre").val()),
+					albumAbstract: $("#albumAbstract").val(),
+					albumTag: $("#albumTag").val()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'album/add.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.alert('新建成功', function() {
+								parent.layer.close(index);
+								window.parent.loaddata();
+							});
+						} else {
+							layer.msg('新建失败');
+						}
+					}
+				});
+			}
+		}
+		//		修改数据
+		function updata() {
+			var checkI = checkInput();
+			if(checkI == true) {
+				var paras = {
+					id: $(".main_mask").attr("data-id"),
+					albumName: $("#albumName").val(),
+					albumSort: $("#albumOrder").val(),
+					albumCoverImage: $("#showImage").attr("alt"),
+					albumPrecious: parseInt($("#isPre").val()),
+					albumAbstract: $("#albumAbstract").val(),
+					albumTag: $("#albumTag").val()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'album/update.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.alert('修改成功', function() {
+								parent.layer.close(index);
+								window.parent.loaddata();
+							});
+						} else {
+							layer.msg("修改失败");
+						}
+					}
+				});
+			}
+		}
+		//		加载分类
+		function loadselect(okcallback) {
+			var paras = {
+				page: page
+			};
+			paras = JSON.stringify(paras);
+			$.ajax({
+				type: 'POST',
+				url: url + 'melody/queryList.do',
+				contentType: "application/json;charset=UTF-8",
+				data: paras,
+				dataType: 'json',
+				success: function(data) {
+					var songclassify = "";
+					for(var i = 0; i < data.data.categoryList.length; i++) {
+						songclassify += "<option value='" + data.data.categoryList[i] + "'>" + data.data.categoryList[i] + "</option>";
+					}
+					$("#albumTag").append(songclassify);
+					okcallback();
+				}
+			});
+		}
+	</script>
+
+</html>

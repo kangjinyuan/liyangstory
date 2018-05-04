@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="KJY_title">用户管理</div>
+			<div class="searchbox">
+				<div class="search_text">
+					<div class="search">
+						<div class="searchname">用户：</div>
+						<div class="searchvalue">
+							<input type="text" name="" value="" id="blur" placeholder="输入用户关键词" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn" onclick="loaddata();">查询</div>
+			</div>
+			<div class="KJY_table">
+				<table>
+					<thead>
+						<tr>
+							<th>头像</th>
+							<th>用户昵称</th>
+							<th>手机号</th>
+							<th>最近登录时间</th>
+							<th>关联平台</th>
+							<th>关联平台ID</th>
+							<th>注册时间</th>
+							<th>账户余额</th>
+						</tr>
+					</thead>
+
+					<tbody id="tbody">
+						<tr v-for="t in datalist">
+							<td>
+								<div class="headimg"><img v-bind:src="t.icon" v-bind:alt="t.icon" /></div>
+							</td>
+							<td>{{t.nickName}}</td>
+							<td>{{t.telephone}}</td>
+							<td>{{t.lastLoginTime | resetTime(t.lastLoginTime)}}</td>
+							<td>{{t.registPlatform}}</td>
+							<td>{{t.registPlatformId}}</td>
+							<td>{{t.createTime | resetTime(t.createTime)}}</td>
+							<td>{{t.accountBalance}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="page">
+				<div>每页显示<span>20</span>条记录</div>
+				<div onclick="firstpage();">首页</div>
+				<div onclick="beforepage();">上一页</div>
+				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
+				<div>共<span id="allpage">{{pageSize}}</span>页</div>
+				<div onclick="nextpage();">下一页</div>
+				<div onclick="lastpage();">末页</div>
+				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/photoload.js"></script>
+	<script src="../js/photoloadinit.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/comment.js"></script>
+	<script>
+		var paras = {
+			datalist: [],
+			datalen: "",
+			currentPage: "",
+			count: "",
+			pageSize: ""
+		}
+		loadvue(paras);
+
+		function loaddata() {
+			loadmaskpart("../part/loadding", function() {
+				var paras = {
+					page: page,
+					blur: $("#blur").val()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'account/queryList.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						var datalist = data.data;
+						var timestamp = new Date().getTime();
+						for(var i = 0; i < datalist.length; i++) {
+							var icon = url + datalist[i].icon + "?timestamp=" + timestamp;
+							datalist[i].icon = icon;
+						}
+						setData.datalist = datalist;
+						setData.currentPage = data.currentPage;
+						setData.count = data.count;
+						setData.pageSize = data.pageSize;
+						setData.datalen = data.data.length;
+						removeloadding(data.data.length);
+					}
+				});
+			});
+		}
+		loaddata();
+	</script>
+
+</html>

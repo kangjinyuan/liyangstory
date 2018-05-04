@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+		<link rel="stylesheet" href="../layui/css/layui.css" />
+		<link rel="stylesheet" href="../layui/css/modules/laydate/laydate.css" />
+	</head>
+
+	<body>
+		<div class="main_mask">
+			<div class="con">
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">文章标题</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="findtitle" class="required bigtextlength" />
+						<div class="masklist_prompt">不超过30个字</div>
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">发现排序</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="findOrder" class="required smallip" />
+						<div class="masklist_prompt">越大越靠前</div>
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">作者</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="findAuthor" class="required smallip" />
+						<div class="masklist_prompt">文章原作者</div>
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">文章封面</span></div>
+					<div class="masklistvalue">
+						<img src="" alt="" id="showImage" onerror="this.src='../img/noimg.png'" />
+						<div class="btn margintop8" onclick="uploadimg(this);">本地上传</div>
+					</div>
+					<form method="post" action="" enctype="multipart/form-data" id="coverImage" style="display: none;">
+						<input type="text" name="fileName" id="Imagetext" value="" />
+						<input type="file" name="file" id="ImageFile" value="" onchange="subimtimgBtn();" />
+					</form>
+				</div>
+				<div class="masklist">
+					<div class="masklistname">摘要：</div>
+					<div class="masklistvalue">
+						<textarea name="" rows="" cols="" id="findzhaiyao" class="findtextlength bigipH"></textarea>
+						<div class="masklist_prompt">不超过200个字</div>
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">文章内容</span></div>
+					<div class="masklistvalue">
+						<textarea id="findCon" style="height: 300px;"></textarea>
+					</div>
+				</div>
+				<div class="maskbtnbox">
+					<div class="btn" onclick="save();" id="creatsave">确定</div>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script src="../js/jquery-1.9.1.min.js"></script>
+	<script src="../js/photoload.js"></script>
+	<script src="../js/photoloadinit.js"></script>
+	<script src="../js/uploadimg.js"></script>
+	<script src="../layui/layui.all.js"></script>
+	<script src="../js/vue.min.js"></script>
+	<script src="../js/comment.js"></script>
+	<script src="../js/jquery.form.js"></script>
+	<script>
+		//		新建文章
+		function save() {
+			var checkI = checkInput();
+			if(checkI == true) {
+				var paras = {
+					articleTitle: $("#findtitle").val(),
+					author: $("#findAuthor").val(),
+					coverImageUrl: $("#showImage").attr("alt"),
+					summary: $("#findzhaiyao").val(),
+					articleSort: parseInt($("#findOrder").val()),
+					content: $(".layui-layedit iframe").contents().find("body").html()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'article/add.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.alert('新建成功', function() {
+								$(".layui-layedit iframe").contents().find("body").empty();
+								parent.layer.close(index);
+								window.parent.loaddata();
+							});
+						} else {
+							layer.msg('新建失败');
+						}
+					}
+				});
+			}
+		}
+		//		修改数据
+		function updata() {
+			var checkI = checkInput();
+			if(checkI == true) {
+				var paras = {
+					id: $(".main_mask").attr("data-id"),
+					articleTitle: $("#findtitle").val(),
+					author: $("#findAuthor").val(),
+					coverImageUrl: $("#showImage").attr("alt"),
+					summary: $("#findzhaiyao").val(),
+					articleSort: parseInt($("#findOrder").val()),
+					content: $(".layui-layedit iframe").contents().find("body").html()
+				};
+				paras = JSON.stringify(paras);
+				$.ajax({
+					type: 'POST',
+					url: url + 'article/update.do',
+					contentType: "application/json;charset=UTF-8",
+					data: paras,
+					dataType: 'json',
+					success: function(data) {
+						if(data.state == true) {
+							layer.alert('修改成功', function() {
+								$(".layui-layedit iframe").contents().find("body").empty();
+								parent.layer.close(index);
+								window.parent.loaddata();
+							});
+						} else {
+							layer.msg("修改失败");
+						}
+					}
+				});
+			}
+		}
+
+		function setlayui() {
+			layui.use('layedit', function() {
+				var layedit = layui.layedit;
+				layedit.set({
+					uploadImage: {
+						url: url + "common/imageUpload.do" //接口url
+							,
+						type: 'post' //默认post
+					}
+				});
+				layedit.build('findCon', {
+					tool: [
+						'strong' //加粗
+						, 'italic' //斜体
+						, 'underline' //下划线
+						, 'del' //删除线
+						, '|' //分割线
+						, 'left' //左对齐
+						, 'center' //居中对齐
+						, 'right' //右对齐
+						, 'face' //表情
+						, 'image' //插入图片
+						, 'help' //帮助
+					]
+				}); //建立编辑器
+			});
+		}
+		setlayui();
+	</script>
+
+</html>
