@@ -38,7 +38,7 @@
 						<div class="searchvalue">
 							<select name="" id="melodyAlbum" v-on:change="loaddata">
 								<option value="">请选择专辑</option>
-								<option v-for="album in albumList" v-bind:value="album">{{album}}</option>
+								<option v-for="album in albumList" v-bind:value="album">{{album.albumName}}</option>
 							</select>
 						</div>
 					</div>
@@ -159,14 +159,18 @@
 								layerdom.find("#Name").val(data.data.melodyName);
 								layerdom.find("#isPre").val(data.data.melodyPrecious);
 								layerdom.find("#Author").val(data.data.melodyAuthor);
-								layerdom.find("#Category").val(data.data.melodyCategory);
 								layerdom.find("#Artist").val(data.data.melodyArtist);
-								layerdom.find("#Album").val(data.data.melodyAlbum);
+								binddata('album/queryList.do', data.data.melodyAlbum, function(res) {
+									var Album = res.data;
+									for(var i = 0; i < Album.length; i++) {
+										layerdom.find("#Album").val(Album[i].id);
+									}
+								})
 								layerdom.find("#Tags").val(data.data.melodyTags);
 								layerdom.find("#melodySort").val(data.data.melodySort);
 								layerdom.find("#ages").val(data.data.melodyAgeStart + "-" + data.data.melodyAgeEnd);
 								layerdom.find("#Price").val(data.data.melodyPrice);
-								layerdom.find("#showImage").attr("src", url + data.data.melodyCoverImage+"?timestamp="+timestamp);
+								layerdom.find("#showImage").attr("src", url + data.data.melodyCoverImage + "?timestamp=" + timestamp);
 								layerdom.find("#showImage").attr("alt", data.data.melodyCoverImage);
 								layerdom.find("#showsong").attr("src", url + data.data.melodyFilePath);
 								layerdom.find("#songtext").val(data.data.melodyFilePath);
