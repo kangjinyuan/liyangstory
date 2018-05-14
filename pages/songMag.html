@@ -29,7 +29,7 @@
 						<div class="searchvalue">
 							<select name="" id="melodyCategory" v-on:change="loaddata">
 								<option value="">请选择分类</option>
-								<option v-for="category in categoryList" v-bind:value="category">{{category}}</option>
+								<option v-for="category in categoryList" v-bind:value="category.categoryName">{{category.categoryName}}</option>
 							</select>
 						</div>
 					</div>-->
@@ -38,7 +38,7 @@
 						<div class="searchvalue">
 							<select name="" id="melodyAlbum" v-on:change="loaddata">
 								<option value="">请选择专辑</option>
-								<option v-for="album in albumList" v-bind:value="album">{{album.albumName}}</option>
+								<option v-for="album in albumList" v-bind:value="album.albumName">{{album.albumName}}</option>
 							</select>
 						</div>
 					</div>
@@ -166,7 +166,7 @@
 										layerdom.find("#Album").val(Album[i].id);
 									}
 								})
-								layerdom.find("#Tags").val(data.data.melodyTags);
+//								layerdom.find("#Tags").val(data.data.melodyTags);
 								layerdom.find("#melodySort").val(data.data.melodySort);
 								layerdom.find("#ages").val(data.data.melodyAgeStart + "-" + data.data.melodyAgeEnd);
 								layerdom.find("#Price").val(data.data.melodyPrice);

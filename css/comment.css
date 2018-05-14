@@ -3,6 +3,7 @@
 .layui-layer-btn .layui-layer-btn0{background: #da423d !important;border: 1px solid #da423d !important;}
 .KJY{width: 100%;overflow: hidden;min-width: 1024px;}
 .KJYBOX{width: 100%;overflow: hidden;display: none;}
+
 /*首页*/
 .index{width: 100%;overflow:hidden;margin: 0px auto;}
 .indexbg{width: 100%;height: 100%;background: url(../img/indexbg.png) no-repeat;background-size:100% 100%;position: absolute;top: 0px;left: 0px;}
@@ -20,6 +21,7 @@
 
 /*内容区*/
 .KJY_title,.mask_title{width:100%;margin:0px auto;background:#fafafa;height: 40px;font:bold 16px/40px 黑体;color: #333;text-indent: 20px;position: relative;}
+
 /*搜索部分*/
 .searchbox{width: 100%;overflow: hidden;border-bottom: 1px dashed #ccc;}
 .search_text{width: 100%;overflow: hidden;padding:8px 0px;}
@@ -30,6 +32,7 @@
 .search .searchvalue input{width:100%;height: 20px;border: 1px solid #ccc;border-radius:3px;font: 12px/22px 黑体;color: #333;text-indent: 10px;}
 .search .searchvalue select{width:100%;height: 22px;border: 1px solid #ccc;border-radius:3px;font: 12px/22px 黑体;color: #333;text-indent: 10px;}
 .search .searchvalue input:focus,.search .searchvalue select:focus{border:1px solid #da423d;}
+
 /*搜索按钮区域*/
 .btnbox{width: 96%;margin:0px auto;overflow: hidden;padding: 8px 0px;}
 .bannerbtnbox{width: 98%;margin:0px auto;overflow: hidden;padding-bottom:8px;}
@@ -37,6 +40,7 @@
 .btnbox .btn:last-child{margin-right: 0px;}
 .btn:hover{background: #da5955;}
 .search_btnbox .btn:last-child{margin: 0px;}
+
 /*表格区域*/
 .KJY_table{width: 98%;min-height:350px;overflow:hidden;margin: 0px auto;border: 1px solid #ccc;position: relative;}
 .KJY_table table{width: 100%;overflow: hidden;}
@@ -54,6 +58,7 @@
 .findimg{width: 100px;overflow: hidden;}
 .headimg img{width: 100%;height: 100%;}
 .findimg img{width: 100%;border-radius: 3px;}
+
 /*banner图管理*/
 .bannerbox,.mask-radio-box{width: 99%;padding: 8px 0px;margin:0px auto;overflow: hidden;}
 .bannerbox li{width: 25%;overflow:hidden;float: left;margin-bottom: 10px;}
@@ -66,7 +71,6 @@
 .rnocheck{cursor:pointer;width: 10px;height: 10px;background: url(../img/rnocheck.png) no-repeat;background-size: 100% 100%;position: absolute;top: 10px;left: 5px;}
 .rchecked{background-image: url(../img/rchecked.png);}
 
-
 /*分页*/
 .page{width: 98%;height: 22px;margin:0px auto;position: relative;padding:8px 0px}
 .page div{width:auto;padding:0px 10px;height:22px;font:12px/22px 黑体;color:#333;float: left;cursor: pointer;}
@@ -74,6 +78,7 @@
 .page .pageinput input{width: 40px;height: 20px;border: 1px solid #ccc;background:#fafafa;outline: none;border-radius: 5px;margin-left: 3px;margin-right: 3px;font: 14px/25px 黑体;color: #333;text-align: center;}
 .page .pageinput input:focus{background: #fff;}
 .page .pagedir{position: absolute;top: 0;bottom:0;right: 0px;margin:auto auto;}
+
 /*弹框*/
 .main_mask{width: 100%;padding:8px 0px;overflow: hidden;}
 .main_mask .con{width: 100%;padding:20px 0px;overflow: hidden;}
@@ -97,9 +102,12 @@
 #QRCode{width: 100px;height: 100px;}
 #QRCodesave{display:none;width: 100%;overflow: hidden;}
 .margintop8{margin-top:8px;}
+
 /*加载模板*/
 .loadding{width:100%;height: 100%;position: fixed;top: 0px;left: 0px;z-index:10;background-color:#fafafa;background-image:url(../img/loadding.gif);background-repeat: no-repeat;background-position: center center;background-size: 100px 100px;}
+
 /*无数据*/
 .nodata{width:100%;height: 100%;position: absolute;top: 0px;left: 0px;z-index:10;background-color:#fafafa;background-image:url(../img/nodata.png);background-repeat: no-repeat;background-position: center center;background-size: 200px auto;}
+
 /*未开放*/
 .noopen{width:100%;height: 100%;position: fixed;top: 0px;left: 0px;z-index:10;background-color:#fafafa;background-image:url(../img/noopen.png);background-repeat: no-repeat;background-position: center center;background-size: 200px auto;}

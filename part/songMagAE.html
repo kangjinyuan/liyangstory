@@ -58,7 +58,7 @@
 				<!--<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">曲目分类</span>：</div>
 					<div class="masklistvalue">
-						<select name="" id="Category" class="required smallip">
+						<select name="" id="Category" class="smallip">
 							<option value="">请选择分类</option>
 						</select>
 					</div>
@@ -90,13 +90,13 @@
 						</select>
 					</div>
 				</div>
-				<div class="masklist">
+				<!--<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">曲目标签</span>：</div>
 					<div class="masklistvalue">
-						<input type="text" name="" value="" id="Tags" class="required" />
+						<input type="text" name="" value="" id="Tags" class="" />
 						<div class="masklist_prompt">最多10个标签,多个标签请用","隔开</div>
 					</div>
-				</div>
+				</div>-->
 				<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">曲目封面</span>：</div>
 					<div class="masklistvalue">
@@ -106,7 +106,7 @@
 					</div>
 				</div>
 				<div class="masklist">
-					<div class="masklistname"><span>*</span><span class="text">上传曲目</span>：</div>
+					<div class="masklistname"><span>*</span><span class="text">曲目</span>：</div>
 					<div class="masklistvalue">
 						<audio controls="controls" src="" id="showsong" class="requiredimg"></audio>
 						<div class="btn margintop8" onclick="uploadsong();" id="creatsong">本地上传</div>
@@ -163,11 +163,11 @@
 					melodyAuthor: $("#Author").val(),
 					melodyAuthor: $("#Author").val(),
 					melodyCategory: $("#Category option:selected").text(),
-					melodyCategoryId: $("#Category option:selected").val(),
+					melodyCategoryId: "0",
 					melodyArtist: $("#Artist").val(),
 					melodyAlbum: $("#Album option:selected").text(),
 					melodyAlbumId: $("#Album option:selected").val(),
-					melodyTags: $("#Tags").val(),
+//					melodyTags: $("#Tags").val(),
 					melodySort: $("#melodySort").val(),
 					melodyAgeStart: $("#ages").val().split("-")[0],
 					melodyAgeEnd: $("#ages").val().split("-")[1],
@@ -207,11 +207,11 @@
 					melodyAuthor: $("#Author").val(),
 					melodyAuthor: $("#Author").val(),
 					melodyCategory: $("#Category option:selected").text(),
-					melodyCategoryId: $("#Category option:selected").val(),
+					melodyCategoryId: "0",
 					melodyArtist: $("#Artist").val(),
 					melodyAlbum: $("#Album option:selected").text(),
 					melodyAlbumId: $("#Album option:selected").val(),
-					melodyTags: $("#Tags").val(),
+//					melodyTags: $("#Tags").val(),
 					melodySort: $("#melodySort").val(),
 					melodyAgeStart: $("#ages").val().split("-")[0],
 					melodyAgeEnd: $("#ages").val().split("-")[1],
@@ -256,10 +256,10 @@
 				success: function(data) {
 					//					var songclassify = "";
 					var albumclassify = "";
-					//					for(var i = 0; i < data.data.categoryList.length; i++) {
-					//						songclassify += "<option value='" + data.data.categoryList[i] + "'>" + data.data.categoryList[i] + "</option>";
-					//					}
-					//					$("#Category").append(songclassify);
+//					for(var i = 0; i < data.data.categoryList.length; i++) {
+//						songclassify += "<option value='" + data.data.categoryList[i].id + "'>" + data.data.categoryList[i].categoryName + "</option>";
+//					}
+//					$("#Category").append(songclassify);
 					for(var i = 0; i < data.data.albumList.length; i++) {
 						albumclassify += "<option value='" + data.data.albumList[i].id + "'>" + data.data.albumList[i].albumName + "</option>";
 					}

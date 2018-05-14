@@ -82,7 +82,7 @@
 							layerdom.find("#bannercon").val(data.data.contentTitle);
 							layerdom.find("#orderIndex").val(data.data.orderIndex);
 							layerdom.find("#bannerconid").val(data.data.contentId);
-							layerdom.find("#showImage").attr("src", url + data.data.bannerImage+"?timestamp="+timestamp);
+							layerdom.find("#showImage").attr("src", url + data.data.bannerImage + "?timestamp=" + timestamp);
 							layerdom.find("#showImage").attr("alt", data.data.bannerImage);
 							layerdom.find("#creatsave").attr("onclick", "updata()");
 						}

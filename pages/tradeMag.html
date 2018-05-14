@@ -120,10 +120,10 @@
 					dataType: 'json',
 					success: function(data) {
 						var datalist = data.data;
-						for(var i = 0; i < datalist.length; i++){
-							if(datalist[i].orderState == 0){
+						for(var i = 0; i < datalist.length; i++) {
+							if(datalist[i].orderState == 0) {
 								datalist[i].orderStateText = "交易失败";
-							}else if(datalist[i].orderState == 1){
+							} else if(datalist[i].orderState == 1) {
 								datalist[i].orderStateText = "交易成功";
 							}
 						}

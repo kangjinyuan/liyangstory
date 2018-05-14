@@ -1,11 +1,14 @@
 .KJY{width: 100%;height: 100%;overflow:hidden;position: absolute;top: 0px;left: 0px;min-width: 1200px;min-height: 550px;}
+
 /*头部*/
 .header{width: 100%;height: 40px;position: relative;overflow: hidden;background:url(../img/hearbg.png) no-repeat;background-size:100% 100%;}
 .header .logo{width: auto;padding-left:130px;height: 100%;background-image: url(../img/logo.png);background-position:20px center;background-repeat: no-repeat;float: left;background-size:auto 30px ;}
 .header .logo .text{width: 300px;height:30px;margin-top:5px;border-left: 1px solid #fff;font: bold 22px/30px 黑体;color: #fff;text-indent: 30px;}
 .header .quit{width: auto;padding-left:25px;background:url(../img/quit2.png) left center no-repeat;background-size:auto 20px;height: 100%;font: 12px/40px 黑体;color: #fff;cursor: pointer;margin-right: 20px;}
+
 /*内容区*/
 .main{width: 100%;}
+
 /*内容区---------左部*/
 .main .mainLeft{width: 15%;height: 100%;overflow: auto;background: #212e40;}
 .main .mainRight{width: 85%;height: 100%;overflow: hidden;position: relative;}
@@ -35,6 +38,7 @@
 .menu-icon8{background-image: url(../img/icon8.png);}
 .menu-icon9{background-image: url(../img/icon9.png);}
 .menu-icon10{background-image: url(../img/icon10.png);}
+
 /*内容区---------右部*/
 #rightIframe{overflow-y:hidden;}
 
