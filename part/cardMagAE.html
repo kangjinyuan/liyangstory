@@ -21,17 +21,36 @@
 		<div class="main_mask">
 			<div class="con">
 				<div class="masklist">
-					<div class="masklistname"><span>*</span><span class="text">分类名称</span>：</div>
+					<div class="masklistname"><span>*</span><span class="text">产品类别</span>：</div>
 					<div class="masklistvalue">
-						<input type="text" name="" value="" id="classifyName" class="required textlength" />
-						<div class="masklist_prompt">不超过15个字</div>
+						<select name="" id="atype" class="required">
+							<option value="">请选择类别</option>
+							<option value="1">vip一个月</option>
+							<option value="2">vip三个月</option>
+							<option value="3">vip一年</option>
+						</select>
 					</div>
 				</div>
 				<div class="masklist">
-					<div class="masklistname"><span>*</span><span class="text">分类排序</span>：</div>
+					<div class="masklistname"><span>*</span><span class="text">生成量</span>：</div>
 					<div class="masklistvalue">
-						<input type="text" name="" value="" id="classifyOrder" class="required" />
-						<div class="masklist_prompt">越大越靠前</div>
+						<input type="text" name="" value="" id="anum" class="required" />
+					</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">手机号</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" class="required phone smallip" />
+					</div>
+				</div>
+				<div class="maskbtnbox">
+					<div class="btn" onclick="sendToken(this)">发送验证码</div>
+				</div>
+				<div class="masklist">
+					<div class="masklistname"><span>*</span><span class="text">验证码</span>：</div>
+					<div class="masklistvalue">
+						<input type="text" name="" value="" id="token" class="moneyip" />
+						<div class="masklist_prompt">验证码为6位数字 如：000000</div>
 					</div>
 				</div>
 				<div class="maskbtnbox">
@@ -41,10 +60,31 @@
 		</div>
 	</body>
 	<script>
-		//		新建classify
+		function sendToken(t) {
+			var checkI = checkInput();
+			if(checkI == true) {
+				if($(t).text() == "发送验证码" || $(t).text() == "重新发送") {
+					getTokentime(t);
+					crequest('POST', 'melody/add.do', paras, 1, function(res) {
+						layer.msg('发送验证码成功');
+					}, function() {
+						layer.msg('发送验证码失败');
+					})
+				}
+			}
+		}
+		//		新建activity
 		function save() {
 			var checkI = checkInput();
 			if(checkI == true) {
+				if($("#token").val() == "") {
+					layer.msg("验证码不能为空");
+					return false;
+				}
+				if($("#token").val().length != 6) {
+					layer.msg("验证码为6位数字");
+					return false;
+				}
 				var paras = {
 					categoryName: $("#classifyName").val(),
 					categorySort: $("#classifyOrder").val()

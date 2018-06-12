@@ -23,26 +23,16 @@ window.onkeydown = function(ev) {
 }
 //登录方法
 function login() {
-	loadmaskpart("part/loadding", function() {
-		$.ajax({
-			type: 'POST',
-			url: url + 'admin/login.do',
-			data: {
-				userName: $('#username').val(),
-				password: $("#password").val()
-			},
-			dataType: 'json',
-			success: function(data) {
-				if(data.state == true) {
-					window.location.href = "main.html";
-				} else {
-					removeloadding();
-					layer.msg("您的用户名或密码不正确", {
-						time: 1000
-					});
-				}
-			}
-		})
+	var paras = {
+		userName: $('#username').val(),
+		password: $("#password").val()
+	}
+	crequest('POST', 'admin/login.do', 0, paras, function(res) {
+		window.location.href = "main.html";
+	}, function() {
+		layer.msg("您的用户名或密码不正确", {
+			time: 1000
+		});
 	})
 }
 

@@ -12,6 +12,10 @@
 		<link rel="shortcut icon" href="img/icon.png" type="image/x-icon" />
 		<link rel="stylesheet" href="css/reset.css" />
 		<link rel="stylesheet" href="css/comment.css" />
+		<script src="js/jquery-1.9.1.min.js"></script>
+		<script src="layui/layui.all.js"></script>
+		<script src="js/vue.min.js"></script>
+		<script src="js/comment.js"></script>
 		<style type="text/css">
 			.index_nav li {
 				width: 33% !important;
@@ -69,10 +73,6 @@
 			</div>
 		</div>
 	</body>
-	<script src="js/jquery-1.9.1.min.js"></script>
-	<script src="js/vue.min.js"></script>
-	<script src="js/comment.js"></script>
-	<script src="js/echarts.min.js"></script>
 	<script>
 		var paras = {
 			melodyCount: "",
@@ -83,23 +83,17 @@
 		loadvue(paras);
 
 		function loaddata() {
-			loadmaskpart("part/loadding", function() {
-				$.ajax({
-					type: "POST",
-					url: url + "mainpage/query.do",
-					contentType: "application/json; charset=utf-8",
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							setData.melodyCount = data.data.melodyCount;
-							setData.classificationCount = data.data.classificationCount;
-							setData.albumCount = data.data.albumCount;
-							setData.accountCount = data.data.accountCount;
-							removeloadding();
-						}
-					}
-				});
-			});
+			var paras = {};
+			paras = JSON.stringify(paras);
+			crequest('POST', 'mainpage/query.do', 1, paras, function(res) {
+				setData.melodyCount = res.data.melodyCount;
+				setData.classificationCount = res.data.classificationCount;
+				setData.albumCount = res.data.albumCount;
+				setData.accountCount = res.data.accountCount;
+				judedatalen()
+			}, function() {
+				layer.msg("首页加载失败");
+			})
 		}
 		loaddata();
 	</script>

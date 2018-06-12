@@ -12,6 +12,15 @@
 		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
 		<link rel="stylesheet" href="../css/reset.css" />
 		<link rel="stylesheet" href="../css/comment.css" />
+		<script src="../js/jquery-1.9.1.min.js"></script>
+		<script src="../js/photoload.js"></script>
+		<script src="../js/photoloadinit.js"></script>
+		<script src="../js/upload.js"></script>
+		<script src="../layui/layui.all.js"></script>
+		<script src="../js/jquery.qrcode.js"></script>
+		<script src="../js/utf.js"></script>
+		<script src="../js/jquery.form.js"></script>
+		<script src="../js/comment.js"></script>
 	</head>
 
 	<body>
@@ -22,16 +31,6 @@
 					<div class="masklistvalue">
 						<input type="text" name="" value="" id="Name" class="required bigtextlength" />
 						<div class="masklist_prompt">不超过30个字</div>
-					</div>
-				</div>
-				<div class="masklist">
-					<div class="masklistname"><span>*</span><span class="text">是否精品</span>：</div>
-					<div class="masklistvalue">
-						<select name="" id="isPre" class="required smallip">
-							<option value="">是否精品</option>
-							<option value="1">是</option>
-							<option value="0">否</option>
-						</select>
 					</div>
 				</div>
 				<div class="masklist">
@@ -75,7 +74,7 @@
 					<div class="masklistname"><span>*</span><span class="text">曲目排序</span>：</div>
 					<div class="masklistvalue">
 						<input type="text" name="" value="" id="melodySort" class="required smallip" />
-						<div class="masklist_prompt">越小越靠前</div>
+						<div class="masklist_prompt">越大越靠前</div>
 					</div>
 				</div>
 				<div class="masklist">
@@ -113,12 +112,12 @@
 					</div>
 				</div>
 				<form method="post" action="" enctype="multipart/form-data" id="coverImage" style="display: none;">
-					<input type="text" name="fileName" id="Imagetext" value="" />
+					<input type="text" name="" id="Imagetext" value="" />
 					<input type="file" name="file" id="ImageFile" value="" onchange="subimtimgBtn();" />
 				</form>
 				<form method="post" action="" enctype="multipart/form-data" id="coversong" style="display: none;">
 					<input type="file" name="file" id="songFile" value="" onchange="subimtsongBtn();" />
-					<input type="text" name="fileName" id="songtext" value="" onchange="subimtsongBtn();" />
+					<input type="text" name="" id="songtext" value="" onchange="subimtsongBtn();" />
 				</form>
 				<div class="maskbtnbox">
 					<div class="btn" onclick="resetmask();">重填</div>
@@ -136,16 +135,6 @@
 			</div>
 		</div>
 	</body>
-	<script src="../js/jquery-1.9.1.min.js"></script>
-	<script src="../js/photoload.js"></script>
-	<script src="../js/photoloadinit.js"></script>
-	<script src="../js/uploadimg.js"></script>
-	<script src="../layui/layui.all.js"></script>
-	<script src="../js/vue.min.js"></script>
-	<script src="../js/jquery.qrcode.js"></script>
-	<script src="../js/utf.js"></script>
-	<script src="../js/jquery.form.js"></script>
-	<script src="../js/comment.js"></script>
 	<script>
 		function downerweima() {
 			var canvas = $('#QRCode').find("canvas").get(0);
@@ -167,7 +156,7 @@
 					melodyArtist: $("#Artist").val(),
 					melodyAlbum: $("#Album option:selected").text(),
 					melodyAlbumId: $("#Album option:selected").val(),
-//					melodyTags: $("#Tags").val(),
+					//					melodyTags: $("#Tags").val(),
 					melodySort: $("#melodySort").val(),
 					melodyAgeStart: $("#ages").val().split("-")[0],
 					melodyAgeEnd: $("#ages").val().split("-")[1],
@@ -175,26 +164,17 @@
 					melodyCoverImage: $("#showImage").attr("alt"),
 					melodyCoverImageId: "0",
 					melodyFilePath: $("#songtext").val(),
-					melodyPrecious: parseInt($("#isPre").val())
+					melodyPrecious:'0'
 				};
 				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'melody/add.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							layer.alert('新建成功', function() {
-								parent.layer.close(index);
-								window.parent.loaddata();
-							});
-						} else {
-							layer.msg('新建失败');
-						}
-					}
-				});
+				crequest('POST', 'melody/add.do', 1, paras, function(res) {
+					layer.alert('新建成功', function() {
+						parent.layer.close(index);
+						window.parent.loaddata();
+					});
+				}, function() {
+					layer.msg('新建失败');
+				})
 			}
 		}
 		//		修改数据
@@ -211,7 +191,7 @@
 					melodyArtist: $("#Artist").val(),
 					melodyAlbum: $("#Album option:selected").text(),
 					melodyAlbumId: $("#Album option:selected").val(),
-//					melodyTags: $("#Tags").val(),
+					//					melodyTags: $("#Tags").val(),
 					melodySort: $("#melodySort").val(),
 					melodyAgeStart: $("#ages").val().split("-")[0],
 					melodyAgeEnd: $("#ages").val().split("-")[1],
@@ -219,26 +199,17 @@
 					melodyCoverImage: $("#showImage").attr("alt"),
 					melodyCoverImageId: "0",
 					melodyFilePath: $("#songtext").val(),
-					melodyPrecious: parseInt($("#isPre").val())
+					melodyPrecious:'0'
 				};
 				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'melody/update.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							layer.alert('修改成功', function() {
-								parent.layer.close(index);
-								window.parent.loaddata();
-							});
-						} else {
-							layer.msg('修改失败');
-						}
-					}
-				});
+				crequest('POST', 'melody/update.do', 1, paras, function(res) {
+					layer.alert('修改成功', function() {
+						parent.layer.close(index);
+						window.parent.loaddata();
+					});
+				}, function() {
+					layer.msg('修改失败');
+				})
 			}
 		}
 		//加载分类和专辑
@@ -247,26 +218,21 @@
 				page: page
 			};
 			paras = JSON.stringify(paras);
-			$.ajax({
-				type: 'POST',
-				url: url + 'melody/queryList.do',
-				contentType: "application/json;charset=UTF-8",
-				data: paras,
-				dataType: 'json',
-				success: function(data) {
-					//					var songclassify = "";
-					var albumclassify = "";
-//					for(var i = 0; i < data.data.categoryList.length; i++) {
-//						songclassify += "<option value='" + data.data.categoryList[i].id + "'>" + data.data.categoryList[i].categoryName + "</option>";
-//					}
-//					$("#Category").append(songclassify);
-					for(var i = 0; i < data.data.albumList.length; i++) {
-						albumclassify += "<option value='" + data.data.albumList[i].id + "'>" + data.data.albumList[i].albumName + "</option>";
-					}
-					$("#Album").append(albumclassify);
-					okcallback();
+			crequest('POST', 'melody/queryList.do', 1, paras, function(res) {
+				//					var songclassify = "";
+				var albumclassify = "";
+				//					for(var i = 0; i < data.data.categoryList.length; i++) {
+				//						songclassify += "<option value='" + data.data.categoryList[i].id + "'>" + data.data.categoryList[i].categoryName + "</option>";
+				//					}
+				//					$("#Category").append(songclassify);
+				for(var i = 0; i < res.data.albumList.length; i++) {
+					albumclassify += "<option value='" + res.data.albumList[i].id + "'>" + res.data.albumList[i].albumName + "</option>";
 				}
-			});
+				$("#Album").append(albumclassify);
+				okcallback();
+			}, function() {
+				layer.msg("专辑加载失败");
+			})
 		}
 	</script>
 

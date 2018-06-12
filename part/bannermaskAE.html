@@ -17,6 +17,10 @@
 		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
 		<link rel="stylesheet" href="../css/reset.css" />
 		<link rel="stylesheet" href="../css/comment.css" />
+		<script src="../js/jquery-1.9.1.min.js"></script>
+		<script src="../layui/layui.all.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/comment.js"></script>
 	</head>
 
 	<body>
@@ -87,13 +91,6 @@
 			</div>
 		</div>
 	</body>
-	<script src="../js/jquery-1.9.1.min.js"></script>
-	<script src="../js/photoload.js"></script>
-	<script src="../js/photoloadinit.js"></script>
-	<script src="../layui/layui.all.js"></script>
-	<script src="../js/vue.min.js"></script>
-	<script src="../js/jquery.form.js"></script>
-	<script src="../js/comment.js"></script>
 	<script>
 		var paras = {
 			datalist: [],
@@ -114,84 +111,66 @@
 
 		function loaddata(ti) {
 			tabindex = ti;
-			loadmaskpart("../part/loadding", function() {
-				if(tabindex == 0) {
-					var paras = {
-						page: page,
-						blur: $("#blur").val()
-					};
-					paras = JSON.stringify(paras);
-
-					$.ajax({
-						type: "POST",
-						url: url + "melody/queryList.do",
-						contentType: "application/json; charset=utf-8",
-						dataType: 'json',
-						data: paras,
-						success: function(data) {
-							setData.type = '0';
-							var datalist = data.data.melodyList;
-							for(var i = 0; i < datalist.length; i++) {
-								datalist[i].isActive = false;
-							}
-							setData.datalist = datalist;
-							setData.currentPage = data.currentPage;
-							setData.pageSize = data.pageSize;
-							setData.datalen = data.data.melodyList.length;
-							removeloadding(data.data.melodyList.length);
-						}
-					});
-				} else if(tabindex == 1) {
-					var paras = {
-						page: page,
-						blur: $("#blur").val()
-					};
-					paras = JSON.stringify(paras);
-					$.ajax({
-						type: 'POST',
-						url: url + 'album/queryList.do',
-						contentType: "application/json;charset=UTF-8",
-						data: paras,
-						dataType: 'json',
-						success: function(data) {
-							setData.type = '1';
-							var datalist = data.data;
-							for(var i = 0; i < datalist.length; i++) {
-								datalist[i].isActive = false;
-							}
-							setData.datalist = datalist;
-							setData.currentPage = data.currentPage;
-							setData.pageSize = data.pageSize;
-							setData.datalen = data.data.length;
-							removeloadding(data.data.length);
-						}
-					});
-				} else if(tabindex == 2) {
-					var paras = {
-						page: page,
-					};
-					paras = JSON.stringify(paras);
-					$.ajax({
-						type: 'POST',
-						url: url + 'article/queryList.do',
-						contentType: "application/json;charset=UTF-8",
-						data: paras,
-						dataType: 'json',
-						success: function(data) {
-							setData.type = '2';
-							var datalist = data.data;
-							for(var i = 0; i < datalist.length; i++) {
-								datalist[i].isActive = false;
-							}
-							setData.datalist = datalist;
-							setData.currentPage = data.currentPage;
-							setData.pageSize = data.pageSize;
-							setData.datalen = data.data.length;
-							removeloadding(data.data.length);
-						}
-					});
-				}
-			});
+			if(tabindex == 0) {
+				var paras = {
+					page: page,
+					blur: $("#blur").val()
+				};
+				paras = JSON.stringify(paras);
+				crequest('POST', 'melody/queryList.do', 1, paras, function(res) {
+					setData.type = '0';
+					var datalist = res.data.melodyList;
+					for(var i = 0; i < datalist.length; i++) {
+						datalist[i].isActive = false;
+					}
+					setData.datalist = datalist;
+					setData.currentPage = res.currentPage;
+					setData.pageSize = res.pageSize;
+					setData.datalen = res.data.melodyList.length;
+					judedatalen(res.data.melodyList.length)
+				}, function() {
+					layer.msg("曲目加载失败");
+				})
+			} else if(tabindex == 1) {
+				var paras = {
+					page: page,
+					blur: $("#blur").val()
+				};
+				paras = JSON.stringify(paras);
+				crequest('POST', 'album/queryList.do', 1, paras, function(res) {
+					setData.type = '1';
+					var datalist = res.data;
+					for(var i = 0; i < datalist.length; i++) {
+						datalist[i].isActive = false;
+					}
+					setData.datalist = datalist;
+					setData.currentPage = res.currentPage;
+					setData.pageSize = res.pageSize;
+					setData.datalen = res.data.length;
+					judedatalen(res.data.length)
+				}, function() {
+					layer.msg("专辑加载失败");
+				})
+			} else if(tabindex == 2) {
+				var paras = {
+					page: page,
+				};
+				paras = JSON.stringify(paras);
+				crequest('POST', 'article/queryList.do', 1, paras, function(res) {
+					setData.type = '2';
+					var datalist = res.data;
+					for(var i = 0; i < datalist.length; i++) {
+						datalist[i].isActive = false;
+					}
+					setData.datalist = datalist;
+					setData.currentPage = res.currentPage;
+					setData.pageSize = res.pageSize;
+					setData.datalen = res.data.length;
+					judedatalen(res.data.length)
+				}, function() {
+					layer.msg("发现加载失败");
+				})
+			}
 		}
 	</script>
 

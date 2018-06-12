@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>李扬故事汇后台管理系统</title>
+		<title>果果故事树后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -14,6 +14,13 @@
 		<link rel="stylesheet" href="../css/comment.css" />
 		<link rel="stylesheet" href="../layui/css/layui.css" />
 		<link rel="stylesheet" href="../layui/css/modules/laydate/laydate.css" />
+		<script src="../js/jquery-1.9.1.min.js"></script>
+		<script src="../js/photoload.js"></script>
+		<script src="../js/photoloadinit.js"></script>
+		<script src="../js/upload.js"></script>
+		<script src="../layui/layui.all.js"></script>
+		<script src="../js/comment.js"></script>
+		<script src="../js/jquery.form.js"></script>
 	</head>
 
 	<body>
@@ -47,7 +54,7 @@
 						<div class="btn margintop8" onclick="uploadimg(this);">本地上传</div>
 					</div>
 					<form method="post" action="" enctype="multipart/form-data" id="coverImage" style="display: none;">
-						<input type="text" name="fileName" id="Imagetext" value="" />
+						<input type="text" name="" id="Imagetext" value="" />
 						<input type="file" name="file" id="ImageFile" value="" onchange="subimtimgBtn();" />
 					</form>
 				</div>
@@ -70,14 +77,6 @@
 			</div>
 		</div>
 	</body>
-	<script src="../js/jquery-1.9.1.min.js"></script>
-	<script src="../js/photoload.js"></script>
-	<script src="../js/photoloadinit.js"></script>
-	<script src="../js/uploadimg.js"></script>
-	<script src="../layui/layui.all.js"></script>
-	<script src="../js/vue.min.js"></script>
-	<script src="../js/comment.js"></script>
-	<script src="../js/jquery.form.js"></script>
 	<script>
 		//		新建文章
 		function save() {
@@ -92,24 +91,15 @@
 					content: $(".layui-layedit iframe").contents().find("body").html()
 				};
 				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'article/add.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							layer.alert('新建成功', function() {
-								$(".layui-layedit iframe").contents().find("body").empty();
-								parent.layer.close(index);
-								window.parent.loaddata();
-							});
-						} else {
-							layer.msg('新建失败');
-						}
-					}
-				});
+				crequest('POST', 'article/add.do', 1, paras, function(res) {
+					layer.alert('新建成功', function() {
+						$(".layui-layedit iframe").contents().find("body").empty();
+						parent.layer.close(index);
+						window.parent.loaddata();
+					});
+				}, function() {
+					layer.msg('新建失败');
+				})
 			}
 		}
 		//		修改数据
@@ -126,24 +116,15 @@
 					content: $(".layui-layedit iframe").contents().find("body").html()
 				};
 				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'article/update.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							layer.alert('修改成功', function() {
-								$(".layui-layedit iframe").contents().find("body").empty();
-								parent.layer.close(index);
-								window.parent.loaddata();
-							});
-						} else {
-							layer.msg("修改失败");
-						}
-					}
-				});
+				crequest('POST', 'article/update.do', 1, paras, function(res) {
+					layer.alert('修改成功', function() {
+						$(".layui-layedit iframe").contents().find("body").empty();
+						parent.layer.close(index);
+						window.parent.loaddata();
+					});
+				}, function() {
+					layer.msg("修改失败");
+				})
 			}
 		}
 

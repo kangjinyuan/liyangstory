@@ -17,6 +17,12 @@
 		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
 		<link rel="stylesheet" href="../css/reset.css" />
 		<link rel="stylesheet" href="../css/comment.css" />
+		<script src="../js/jquery-1.9.1.min.js"></script>
+		<script src="../layui/layui.all.js"></script>
+		<script src="../js/jquery.qrcode.js"></script>
+		<script src="../js/utf.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/comment.js"></script>
 	</head>
 
 	<body>
@@ -79,9 +85,10 @@
 							<th>播放次数</th>
 							<th>创建时间</th>
 							<th>修改时间</th>
+							<th>操作</th>
 						</tr>
 						<tbody id="tbody">
-							<tr v-for="(t,i) in datalist" v-on:dblclick="seedata(t.id)">
+							<tr v-for="(t,i) in datalist">
 								<td class="padding20">
 									<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectdata($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}</td>
 								<td>{{t.melodyName}}</td>
@@ -92,6 +99,9 @@
 								<td>{{t.melodyPlayTimes}}</td>
 								<td>{{t.createTime | resetTime(t.createTime)}}</td>
 								<td>{{t.updateTime | resetTime(t.updateTime)}}</td>
+								<td>
+									<div class="btn" v-on:click="seedata(t.id)">编辑</div>
+								</td>
 							</tr>
 						</tbody>
 					</thead>
@@ -109,13 +119,6 @@
 			</div>
 		</div>
 	</body>
-	<script src="../js/jquery-1.9.1.min.js"></script>
-	<script src="../layui/layui.all.js"></script>
-	<script src="../js/vue.min.js"></script>
-	<script src="../js/jquery.qrcode.js"></script>
-	<script src="../js/utf.js"></script>
-	<script src="../js/jquery.form.js"></script>
-	<script src="../js/comment.js"></script>
 	<script>
 		var paras = {
 			albumList: [],
@@ -148,45 +151,37 @@
 					};
 					paras = JSON.stringify(paras);
 					var timestamp = new Date().getTime();
-					$.ajax({
-						type: 'POST',
-						url: url + 'melody/query.do',
-						contentType: "application/json;charset=UTF-8",
-						data: paras,
-						dataType: 'json',
-						success: function(data) {
-							if(data.state == true) {
-								layerdom.find("#Name").val(data.data.melodyName);
-								layerdom.find("#isPre").val(data.data.melodyPrecious);
-								layerdom.find("#Author").val(data.data.melodyAuthor);
-								layerdom.find("#Artist").val(data.data.melodyArtist);
-								binddata('album/queryList.do', data.data.melodyAlbum, function(res) {
-									var Album = res.data;
-									for(var i = 0; i < Album.length; i++) {
-										layerdom.find("#Album").val(Album[i].id);
-									}
-								})
-//								layerdom.find("#Tags").val(data.data.melodyTags);
-								layerdom.find("#melodySort").val(data.data.melodySort);
-								layerdom.find("#ages").val(data.data.melodyAgeStart + "-" + data.data.melodyAgeEnd);
-								layerdom.find("#Price").val(data.data.melodyPrice);
-								layerdom.find("#showImage").attr("src", url + data.data.melodyCoverImage + "?timestamp=" + timestamp);
-								layerdom.find("#showImage").attr("alt", data.data.melodyCoverImage);
-								layerdom.find("#showsong").attr("src", url + data.data.melodyFilePath);
-								layerdom.find("#songtext").val(data.data.melodyFilePath);
-								layerdom.find("#creatsave").attr("onclick", "updata();");
-								layerdom.find("#QRCodesave").show();
-								layerdom.find("#QRCode").qrcode({
-									render: "canvas",
-									text: url + "share/player.html?melodyId=" + data.data.id + "&melodyAlbum=" + data.data.melodyAlbum,
-									width: "100", //二维码的宽度
-									height: "100", //二维码的高度
-									background: "#ffffff", //二维码的后景色
-									foreground: "#000000", //二维码的前景色
-								});
+					crequest('POST', 'melody/query.do', 1, paras, function(res) {
+						layerdom.find("#Name").val(res.data.melodyName);
+						layerdom.find("#Author").val(res.data.melodyAuthor);
+						layerdom.find("#Artist").val(res.data.melodyArtist);
+						binddata('album/queryList.do', res.data.melodyAlbum, function(res) {
+							var Album = res.data;
+							for(var i = 0; i < Album.length; i++) {
+								layerdom.find("#Album").val(Album[i].id);
 							}
-						}
-					});
+						})
+						//								layerdom.find("#Tags").val(data.data.melodyTags);
+						layerdom.find("#melodySort").val(res.data.melodySort);
+						layerdom.find("#ages").val(res.data.melodyAgeStart + "-" + res.data.melodyAgeEnd);
+						layerdom.find("#Price").val(res.data.melodyPrice);
+						layerdom.find("#showImage").attr("src", url + res.data.melodyCoverImage + "?timestamp=" + timestamp);
+						layerdom.find("#showImage").attr("alt", res.data.melodyCoverImage);
+						layerdom.find("#showsong").attr("src", url + res.data.melodyFilePath);
+						layerdom.find("#songtext").val(res.data.melodyFilePath);
+						layerdom.find("#creatsave").attr("onclick", "updata();");
+						layerdom.find("#QRCodesave").show();
+						layerdom.find("#QRCode").qrcode({
+							render: "canvas",
+							text: url + "share/player.html?melodyId=" + res.data.id + "&melodyAlbum=" + res.data.melodyAlbum,
+							width: "100", //二维码的宽度
+							height: "100", //二维码的高度
+							background: "#ffffff", //二维码的后景色
+							foreground: "#000000", //二维码的前景色
+						});
+					}, function() {
+						layer.msg("查看曲目失败");
+					})
 				})
 
 			})
@@ -200,21 +195,14 @@
 				layer.confirm('确定要删除此条数据吗？', {
 					btn: ['确定', '取消']
 				}, function() {
-					$.ajax({
-						type: 'POST',
-						url: url + 'melody/delete.do',
-						data: {
-							idList: delidList
-						},
-						dataType: 'json',
-						success: function(data) {
-							if(data.state == true) {
-								loaddata();
-								layer.closeAll('dialog');
-							} else {
-								layer.msg("删除失败");
-							}
-						}
+					var paras = {
+						idList: delidList
+					}
+					crequest('POST', 'melody/delete.do', 0, paras, function(res) {
+						loaddata();
+						layer.closeAll('dialog');
+					}, function() {
+						layer.msg("删除失败");
 					})
 				}, function() {
 
@@ -223,41 +211,33 @@
 		}
 
 		function loaddata() {
-			loadmaskpart("../part/loadding", function() {
-				var melodyCategory = $("#melodyCategory").val();
-				var melodyAlbum = $("#melodyAlbum").val();
-				var paras = {
-					page: page,
-					blur: $("#blur").val(),
-					melodyCategory: melodyCategory,
-					melodyAlbum: melodyAlbum,
-					isPrecious: $("#melodyPrecious").val()
-				};
-				paras = JSON.stringify(paras);
-
-				$.ajax({
-					type: "POST",
-					url: url + "melody/queryList.do",
-					contentType: "application/json; charset=utf-8",
-					dataType: 'json',
-					data: paras,
-					success: function(data) {
-						setData.albumList = data.data.albumList;
-						setData.categoryList = data.data.categoryList;
-						var datalist = data.data.melodyList;
-						for(var i = 0; i < datalist.length; i++) {
-							datalist[i].isActive = false;
-						}
-						setData.allisActive = false;
-						setData.datalist = datalist;
-						setData.currentPage = data.currentPage;
-						setData.count = data.count;
-						setData.pageSize = data.pageSize;
-						setData.datalen = data.data.melodyList.length;
-						removeloadding(data.data.melodyList.length);
-					}
-				});
-			});
+			var melodyCategory = $("#melodyCategory").val();
+			var melodyAlbum = $("#melodyAlbum").val();
+			var paras = {
+				page: page,
+				blur: $("#blur").val(),
+				melodyCategory: melodyCategory,
+				melodyAlbum: melodyAlbum,
+				isPrecious: $("#melodyPrecious").val()
+			};
+			paras = JSON.stringify(paras);
+			crequest('POST', 'melody/queryList.do', 1, paras, function(res) {
+				setData.albumList = res.data.albumList;
+				setData.categoryList = res.data.categoryList;
+				var datalist = res.data.melodyList;
+				for(var i = 0; i < datalist.length; i++) {
+					datalist[i].isActive = false;
+				}
+				setData.allisActive = false;
+				setData.datalist = datalist;
+				setData.currentPage = res.currentPage;
+				setData.count = res.count;
+				setData.pageSize = res.pageSize;
+				setData.datalen = res.data.melodyList.length;
+				judedatalen(res.data.melodyList.length)
+			}, function() {
+				layer.msg("曲目加载失败");
+			})
 		}
 
 		loaddata();

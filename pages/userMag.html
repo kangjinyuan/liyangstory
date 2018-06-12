@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>李扬故事汇后台管理系统</title>
+		<title>果果故事树后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -12,6 +12,12 @@
 		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
 		<link rel="stylesheet" href="../css/reset.css" />
 		<link rel="stylesheet" href="../css/comment.css" />
+		<script src="../js/jquery-1.9.1.min.js"></script>
+		<script src="../js/photoload.js"></script>
+		<script src="../js/photoloadinit.js"></script>
+		<script src="../layui/layui.all.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/comment.js"></script>
 	</head>
 
 	<body>
@@ -34,6 +40,7 @@
 				<table>
 					<thead>
 						<tr>
+							<th>序号</th>
 							<th>头像</th>
 							<th>用户昵称</th>
 							<th>手机号</th>
@@ -46,9 +53,10 @@
 					</thead>
 
 					<tbody id="tbody">
-						<tr v-for="t in datalist">
+						<tr v-for="(t,i) in datalist">
+							<td>{{((currentPage-1)*20)+(i+1)}}</td>
 							<td>
-								<div class="headimg"><img v-bind:src="t.icon" v-bind:alt="t.icon" /></div>
+								<div class="headimg"><img v-bind:src="t.icon" v-bind:alt="t.icon" onerror="this.src='../img/noimg.png'" /></div>
 							</td>
 							<td>{{t.nickName}}</td>
 							<td>{{t.telephone}}</td>
@@ -73,11 +81,6 @@
 			</div>
 		</div>
 	</body>
-	<script src="../js/jquery-1.9.1.min.js"></script>
-	<script src="../js/photoload.js"></script>
-	<script src="../js/photoloadinit.js"></script>
-	<script src="../js/vue.min.js"></script>
-	<script src="../js/comment.js"></script>
 	<script>
 		var paras = {
 			datalist: [],
@@ -89,34 +92,31 @@
 		loadvue(paras);
 
 		function loaddata() {
-			loadmaskpart("../part/loadding", function() {
-				var paras = {
-					page: page,
-					blur: $("#blur").val()
-				};
-				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'account/queryList.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						var datalist = data.data;
-						var timestamp = new Date().getTime();
-						for(var i = 0; i < datalist.length; i++) {
-							var icon = url + datalist[i].icon + "?timestamp=" + timestamp;
-							datalist[i].icon = icon;
-						}
-						setData.datalist = datalist;
-						setData.currentPage = data.currentPage;
-						setData.count = data.count;
-						setData.pageSize = data.pageSize;
-						setData.datalen = data.data.length;
-						removeloadding(data.data.length);
+			var paras = {
+				page: page,
+				blur: $("#blur").val()
+			};
+			paras = JSON.stringify(paras);
+			crequest('POST', 'account/queryList.do', 1, paras, function(res) {
+				var datalist = res.data;
+				var timestamp = new Date().getTime();
+				for(var i = 0; i < datalist.length; i++) {
+					if(datalist[i].registPlatform == 'wechat' || datalist[i].registPlatform == 'wx_xcx'){
+						var icon = datalist[i].icon + "?timestamp=" + timestamp;
+					}else if(datalist[i].registPlatform == null){
+						var icon = url + datalist[i].icon + "?timestamp=" + timestamp;
 					}
-				});
-			});
+					datalist[i].icon = icon;
+				}
+				setData.datalist = datalist;
+				setData.currentPage = res.currentPage;
+				setData.count = res.count;
+				setData.pageSize = res.pageSize;
+				setData.datalen = res.data.length;
+				judedatalen(res.data.length)
+			}, function() {
+				layer.msg("用户列表加载失败")
+			})
 		}
 		loaddata();
 	</script>

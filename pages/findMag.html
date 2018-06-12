@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>李扬故事汇后台管理系统</title>
+		<title>果果故事树后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -12,6 +12,12 @@
 		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
 		<link rel="stylesheet" href="../css/reset.css" />
 		<link rel="stylesheet" href="../css/comment.css" />
+		<script src="../js/jquery-1.9.1.min.js"></script>
+		<script src="../js/photoload.js"></script>
+		<script src="../js/photoloadinit.js"></script>
+		<script src="../layui/layui.all.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/comment.js"></script>
 	</head>
 
 	<body>
@@ -60,13 +66,6 @@
 			</div>
 		</div>
 	</body>
-	<script src="../js/jquery-1.9.1.min.js"></script>
-	<script src="../js/photoload.js"></script>
-	<script src="../js/init.js"></script>
-	<script src="../layui/layui.all.js"></script>
-	<script src="../js/vue.min.js"></script>
-	<script src="../js/comment.js"></script>
-	<script src="../js/jquery.form.js"></script>
 	<script>
 		var paras = {
 			datalist: [],
@@ -86,21 +85,12 @@
 					isPublished: fabu
 				};
 				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'article/update.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							layer.msg("发布成功");
-							loaddata();
-						} else {
-							layer.msg("发布失败");
-						}
-					}
-				});
+				crequest('POST', 'article/update.do', 1, paras, function(res) {
+					layer.msg("发布成功");
+					loaddata();
+				}, function() {
+					layer.msg("发布失败");
+				})
 			} else if($(ev).text() == "下线") {
 				var fabu = 0;
 				var paras = {
@@ -108,21 +98,12 @@
 					isPublished: fabu
 				};
 				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'article/update.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							layer.msg("下线成功");
-							loaddata();
-						} else {
-							layer.msg("下线失败");
-						}
-					}
-				});
+				crequest('POST', 'article/update.do', 1, paras, function(res) {
+					layer.msg("下线成功");
+					loaddata();
+				}, function() {
+					layer.msg("下线失败");
+				})
 			}
 		}
 		//		新建弹出
@@ -139,25 +120,18 @@
 				};
 				paras = JSON.stringify(paras);
 				var timestamp = new Date().getTime();
-				$.ajax({
-					type: 'POST',
-					url: url + 'article/query.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							layerdom.find("#findtitle").val(data.data.articleTitle);
-							layerdom.find("#findAuthor").val(data.data.author);
-							layerdom.find("#showImage").attr("src", url + data.data.coverImageUrl + "?timestamp=" + timestamp);
-							layerdom.find("#showImage").attr("alt", data.data.coverImageUrl);
-							layerdom.find("#findzhaiyao").val(data.data.summary);
-							layerdom.find("#findOrder").val(data.data.articleSort);
-							layerdom.find(".layui-layedit iframe").contents().find("body").html(data.data.content);
-							layerdom.find("#creatsave").attr("onclick", "updata()");
-						}
-					}
-				});
+				crequest('POST', 'article/query.do', 1, paras, function(res) {
+					layerdom.find("#findtitle").val(res.data.articleTitle);
+					layerdom.find("#findAuthor").val(res.data.author);
+					layerdom.find("#showImage").attr("src", url + res.data.coverImageUrl + "?timestamp=" + timestamp);
+					layerdom.find("#showImage").attr("alt", res.data.coverImageUrl);
+					layerdom.find("#findzhaiyao").val(res.data.summary);
+					layerdom.find("#findOrder").val(res.data.articleSort);
+					layerdom.find(".layui-layedit iframe").contents().find("body").html(res.data.content);
+					layerdom.find("#creatsave").attr("onclick", "updata()");
+				}, function() {
+					layer.msg("查看发现失败");
+				})
 			})
 		}
 		//删除数据
@@ -166,21 +140,14 @@
 			layer.confirm('确定要删除此条数据吗？', {
 				btn: ['确定', '取消']
 			}, function() {
-				$.ajax({
-					type: 'POST',
-					url: url + 'article/delete.do',
-					data: {
-						idList: delidList
-					},
-					dataType: 'json',
-					success: function(data) {
-						if(data.state == true) {
-							loaddata();
-							layer.closeAll('dialog');
-						} else {
-							layer.msg("删除失败");
-						}
-					}
+				var paras = {
+					idList: delidList
+				}
+				crequest('POST', 'article/delete.do', 0, paras, function(res) {
+					loaddata();
+					layer.closeAll('dialog');
+				}, function() {
+					layer.msg("删除失败");
 				})
 			}, function() {
 
@@ -189,40 +156,33 @@
 		}
 
 		function loaddata() {
-			loadmaskpart("../part/loadding", function() {
-				var paras = {
-					page: page
-				};
-				paras = JSON.stringify(paras);
-				$.ajax({
-					type: 'POST',
-					url: url + 'article/queryList.do',
-					contentType: "application/json;charset=UTF-8",
-					data: paras,
-					dataType: 'json',
-					success: function(data) {
-						var datalist = data.data;
-						var timestamp = new Date().getTime();
-						for(var i = 0; i < datalist.length; i++) {
-							if(datalist[i].isPublished == "0") {
-								datalist[i].publishedtext = "发布";
-							} else {
-								datalist[i].publishedtext = "下线";
-							}
-							var headimg = url + datalist[i].coverImageUrl + "?timestamp=" + timestamp;
-							datalist[i].headimg = headimg
-						}
-						if(datalist.length == 0) {
-							setData.allisActive == false;
-						}
-						setData.datalist = datalist;
-						setData.currentPage = data.currentPage;
-						setData.count = data.count;
-						setData.pageSize = data.pageSize;
-						setData.datalen = data.data.length;
-						removeloadding(data.data.length);
+			var paras = {
+				page: page
+			};
+			paras = JSON.stringify(paras);
+			crequest('POST', 'article/queryList.do', 1, paras, function(res) {
+				var datalist = res.data;
+				var timestamp = new Date().getTime();
+				for(var i = 0; i < datalist.length; i++) {
+					if(datalist[i].isPublished == "0") {
+						datalist[i].publishedtext = "发布";
+					} else {
+						datalist[i].publishedtext = "下线";
 					}
-				});
+					var headimg = url + datalist[i].coverImageUrl + "?timestamp=" + timestamp;
+					datalist[i].headimg = headimg
+				}
+				if(datalist.length == 0) {
+					setData.allisActive == false;
+				}
+				setData.datalist = datalist;
+				setData.currentPage = res.currentPage;
+				setData.count = res.count;
+				setData.pageSize = res.pageSize;
+				setData.datalen = res.data.length;
+				judedatalen(res.data.length);
+			}, function() {
+				layer.msg("分类加载失败");
 			})
 		}
 		loaddata();

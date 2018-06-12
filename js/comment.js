@@ -1,4 +1,4 @@
-var url = "http://admin.liyangstory.com/";
+var url = "https://admin.liyangstory.com/";
 var setData;
 var index = parent.layer.getFrameIndex(window.name);
 //初始化vue
@@ -21,6 +21,34 @@ function loadvue(paras) {
 			return Y + M + D + h + m + s;
 		}
 	})
+}
+
+//公共请求方法
+function crequest(method, rurl, rtype, paras, okcallback, nocallback) {
+	var loadding = layer.load(0, {
+		shade: [0.1, '#fafafa'],
+		area: ['88px', '88px']
+	});
+	if(rtype == 0) {
+		var rtype = "application/x-www-form-urlencoded;charset=UTF-8";
+	} else if(rtype == 1) {
+		var rtype = "application/json;charset=UTF-8";
+	}
+	$.ajax({
+		type: method,
+		url: url + rurl,
+		contentType: rtype,
+		data: paras,
+		dataType: 'json',
+		success: function(res) {
+			if(res.state == true || res.code == 0000) {
+				okcallback(res);
+			} else {
+				nocallback()
+			}
+			layer.closeAll('loading');
+		}
+	});
 }
 
 //批量删除
@@ -109,14 +137,13 @@ function loadnodata() {
 }
 
 //列表加载移除
-function removeloadding(data, flag) {
+function judedatalen(data) {
 	if(data == 0) {
 		loadnodata();
 	} else {
 		$(".nodata").remove();
 	}
 	$(".KJYBOX").show();
-	$(".loadding").remove();
 }
 
 //弹出框展示
@@ -167,7 +194,6 @@ function getQueryString(key) {
 }
 
 var page = 1;
-
 //正常页面
 function firstpage() {
 	page = 1;
@@ -239,26 +265,27 @@ function uploadsong() {
 }
 
 function subimtsongBtn() {
-	loadmaskpart("../part/loadding", function() {
-		var form = $("#coversong");
-		var timestamp = new Date().getTime();
-		var options = {
-			url: $(form).attr("action"),
-			type: 'post',
-			success: function(data) {
-				if(data.state == true) {
-					$("#showsong").attr("src", url + data.msg + "?timestamp=" + timestamp);
-					$("#song").val($("#songFile").val());
-					$("#songtext").val(data.msg);
-					removeloadding();
-				} else {
-					layer.msg(data.msg);
-					removeloadding();
-				}
+	var loadding = layer.load(0, {
+		shade: [0.1, '#fafafa'],
+		area: ['88px', '88px']
+	});
+	var form = $("#coversong");
+	var timestamp = new Date().getTime();
+	var options = {
+		url: $(form).attr("action"),
+		type: 'post',
+		success: function(data) {
+			if(data.state == true) {
+				$("#showsong").attr("src", url + data.msg + "?timestamp=" + timestamp);
+				$("#song").val($("#songFile").val());
+				$("#songtext").val(data.msg);
+			} else {
+				layer.msg(data.msg);
 			}
-		};
-		form.ajaxSubmit(options);
-	})
+			layer.closeAll('loading');
+		}
+	};
+	form.ajaxSubmit(options);
 };
 
 //ajax内部查看专辑和分类
@@ -279,6 +306,33 @@ function binddata(bindurl, blur, callback) {
 			}
 		}
 	});
+}
+
+//时间控件
+function setTime(dom) {
+	layui.use('laydate', function() {
+		var laydate = layui.laydate;
+		laydate.render({
+			elem: dom
+		});
+	});
+}
+
+//发送验证码
+var tokentimer
+var tt = 60;
+
+function getTokentime(t) {
+	var tokentimer = setInterval(function() {
+		tt--;
+		if(tt == 0) {
+			tt = 60;
+			$(t).html("重新发送");
+			clearInterval(tokentimer);
+		} else {
+			$(t).html(tt + "S重新发送");
+		}
+	}, 1000);
 }
 
 function checkInput() {
@@ -318,6 +372,42 @@ function checkInput() {
 		if($(".findtextlength").eq(i).val().length > 200) {
 			var findtextlength = $(".findtextlength").eq(i).parent().siblings(".masklistname").find(".text").text();
 			layer.msg(findtextlength + "长度不能超过200");
+			return false;
+		}
+	}
+	//	手机号正则表达式
+	var phone = /^[1][3,4,5,7,8][0-9]{9}$/;
+	if($(".phone").val() != "" && $(".phone").val() != undefined) {
+		if(!phone.test($(".phone").val())) {
+			var phonetxt = $(".phone").parent().siblings(".masklistname").find(".text").text();
+			layer.msg(phonetxt + " 格式错误 请核对");
+			return false;
+		}
+	}
+	//	邮箱正则表达式
+	var email = /^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
+	if($(".email").val() != "" && $(".email").val() != undefined) {
+		if(!email.test($(".email").val())) {
+			var emailtxt = $(".email").parent().siblings(".masklistname").find(".text").text();
+			layer.msg(emailtxt + " 格式错误 请核对");
+			return false;
+		}
+	}
+	//	身份证正则表达式
+	var usercard = /^\d{6}(18|19|20)?\d{2}(0[1-9]|1[012])(0[1-9]|[12]\d|3[01])\d{3}(\d|[xX])$/;
+	if($(".usercard").val() != "" && $(".usercard").val() != undefined) {
+		if(!usercard.test($(".usercard").val())) {
+			var usercardtxt = $(".usercard").parent().siblings(".masklistname").find(".text").text();
+			layer.msg(usercardtxt + " 格式错误 请核对");
+			return false;
+		}
+	}
+	//	产品编码正则表达式
+	var pcode = /^[A-Za-z][0-9]{1}$/;
+	if($(".pcode").val() != "" && $(".pcode").val() != undefined) {
+		if(!pcode.test($(".pcode").val())) {
+			var pcodetxt = $(".pcode").parent().siblings(".masklistname").find(".text").text();
+			layer.msg(pcodetxt + " 格式错误 请核对");
 			return false;
 		}
 	}
