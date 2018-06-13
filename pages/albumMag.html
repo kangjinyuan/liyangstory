@@ -86,12 +86,12 @@
 			</div>
 			<div class="page">
 				<div>每页显示<span>20</span>条记录</div>
-				<div onclick="firstpage();">首页</div>
-				<div onclick="beforepage();">上一页</div>
+				<div onclick="firstpage(0);">首页</div>
+				<div onclick="beforepage(0);">上一页</div>
 				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
 				<div>共<span id="allpage">{{pageSize}}</span>页</div>
-				<div onclick="nextpage();">下一页</div>
-				<div onclick="lastpage();">末页</div>
+				<div onclick="nextpage(0);">下一页</div>
+				<div onclick="lastpage(0);">末页</div>
 				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
 			</div>
 		</div>

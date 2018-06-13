@@ -2,7 +2,7 @@
 <html>
 
 	<head>
-		<title>麦瑞康后台管理系统</title>
+		<title>李扬故事汇后台管理系统</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<meta name="keywords" content="">
@@ -38,8 +38,9 @@
 					<div class="search">
 						<div class="searchname">产品类别：</div>
 						<div class="searchvalue">
-							<select name="" id="">
+							<select name="" id="productType" v-on:change="loaddata">
 								<option value="">请选择产品类别</option>
+								<option v-for="t in productType" v-bind:value="t.id">{{t.title}}</option>
 							</select>
 						</div>
 					</div>
@@ -47,16 +48,6 @@
 						<div class="searchname">产品编码：</div>
 						<div class="searchvalue">
 							<input type="text" name="" value="" id="productCode" placeholder="输入产品编码" />
-						</div>
-					</div>
-				</div>
-				<div class="search_time">
-					<div class="search">
-						<div class="search_name">价格区间：</div>
-						<div class="search_time_value">
-							<div class="searchvalue"><input type="text" name="" value="" id="" /></div>
-							<div class="time_cut">至</div>
-							<div class="searchvalue"><input type="text" name="" value="" id="" /></div>
 						</div>
 					</div>
 				</div>
@@ -79,11 +70,11 @@
 							<th>操作</th>
 						</tr>
 						<tbody id="tbody">
-							<tr v-for="(t,i) in datalist" v-on:dblclick="seedata(t.id)">
+							<tr v-for="(t,i) in datalist">
 								<td class="padding20">
-								<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectdata($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}</td>
+									<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectdata($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}</td>
 								<td>{{t.productName}}</td>
-								<td>{{t.productName}}</td>
+								<td>{{t.productType}}</td>
 								<td>{{t.productCode}}</td>
 								<td>{{t.productPrice}}</td>
 								<td>
@@ -96,12 +87,12 @@
 			</div>
 			<div class="page">
 				<div>每页显示<span>20</span>条记录</div>
-				<div onclick="firstpage();">首页</div>
-				<div onclick="beforepage();">上一页</div>
+				<div onclick="firstpage(0);">首页</div>
+				<div onclick="beforepage(0);">上一页</div>
 				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
 				<div>共<span id="allpage">{{pageSize}}</span>页</div>
-				<div onclick="nextpage();">下一页</div>
-				<div onclick="lastpage();">末页</div>
+				<div onclick="nextpage(0);">下一页</div>
+				<div onclick="lastpage(0);">末页</div>
 				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
 			</div>
 		</div>
@@ -119,31 +110,38 @@
 			currentPage: "",
 			count: "",
 			pageSize: "",
+			productType: [],
 			allisActive: false
 		}
 		loadvue(paras);
 		//		新建弹出
 		function showmask(t, title) {
-			openmask("", "../part/productMagAE", title, "50%", "60%", function(layerdom, layerifame) {
-				layerdom.find("#creatsave").attr("onclick", "save();");
+			openmask("", "../part/productMagAE", title, "50%", "65%", function(layerdom, layerifame) {
+				layerifame[0].contentWindow.loadselect(function() {
+					layerdom.find("#creatsave").attr("onclick", "save();");
+				})
 			})
 		}
 
 		//		查看数据
 		function seedata(id) {
-			openmask(id, "../part/productMagAE", "编辑产品", "50%", "60%", function(layerdom, layerifame) {
-				//				layerifame[0].contentWindow.loadselect(function() {
-				//					var paras = {
-				//						id: id
-				//					};
-				//					paras = JSON.stringify(paras);
-				//					var timestamp = new Date().getTime();
-				//					crequest('POST', 'melody/query.do', paras,1, function(res) {
-				//						layerdom.find("#creatsave").attr("onclick", "updata();");
-				//					}, function() {
-				//						layer.msg('加载失败');
-				//					})
-				//				})
+			openmask(id, "../part/productMagAE", "编辑产品", "50%", "65%", function(layerdom, layerifame) {
+				layerifame[0].contentWindow.loadselect(function() {
+					var paras = {
+						id: id
+					};
+					paras = JSON.stringify(paras);
+					var timestamp = new Date().getTime();
+					crequest('POST', 'product/query.do', 1, paras, function(res) {
+						layerdom.find("#productType").val(res.data.productTypeId);
+						layerdom.find("#productName").val(res.data.productName);
+						layerdom.find("#productCode").val(res.data.productCode);
+						layerdom.find("#productPrice").val(res.data.productPrice);
+						layerdom.find("#creatsave").attr("onclick", "updata();");
+					}, function() {
+						layer.msg('加载失败');
+					})
+				})
 
 			})
 		}
@@ -159,7 +157,7 @@
 					var paras = {
 						idList: delidList
 					}
-					crequest('POST', 'melody/delete.do', 0, paras, function(res) {
+					crequest('POST', 'product/delete.do', 0, paras, function(res) {
 						loaddata();
 						layer.closeAll('dialog');
 					}, function() {
@@ -175,6 +173,7 @@
 			var paras = {
 				page: page,
 				blur: $("#blur").val(),
+				productTypeId: $("#productType").val(),
 				productName: $("#productName").val(),
 				productCode: $("#productCode").val()
 			};
@@ -196,7 +195,20 @@
 			})
 		}
 
+		function loadproductType() {
+			var paras = {
+				page: page
+			};
+			paras = JSON.stringify(paras);
+			crequest('POST', 'productType/queryList.do', 1, paras, function(res) {
+				setData.productType = res.data;
+			}, function() {
+				layer.msg('产品类别失败');
+			})
+		}
+
 		loaddata();
+		loadproductType();
 	</script>
 
 </html>

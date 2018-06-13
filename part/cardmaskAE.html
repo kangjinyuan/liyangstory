@@ -29,9 +29,9 @@
 				<div class="searchbox" v-if="type == '0'">
 					<div class="search_text">
 						<div class="search">
-							<div class="searchname">曲目名称：</div>
+							<div class="searchname">产品名称：</div>
 							<div class="searchvalue">
-								<input type="text" name="" value="" id="blur" placeholder="输入曲目关键词" />
+								<input type="text" name="" value="" id="productName" placeholder="输入产品名称" />
 							</div>
 						</div>
 					</div>
@@ -39,9 +39,9 @@
 				<div class="searchbox" v-if="type == '1'">
 					<div class="search_text">
 						<div class="search">
-							<div class="searchname">专辑名称：</div>
+							<div class="searchname">销售人员：</div>
 							<div class="searchvalue">
-								<input type="text" name="" value="" id="blur" placeholder="输入专辑关键词" />
+								<input type="text" name="" value="" id="salerName" placeholder="输入销售人员姓名" />
 							</div>
 						</div>
 					</div>
@@ -61,17 +61,12 @@
 						<tbody>
 							<tr v-if="type == '0'" v-for="(t,i) in datalist">
 								<td class="padding20">
-									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.melodyName}}</td>
+									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.productName}}</td>
 								<td>{{t.createTime | resetTime(t.createTime)}}</td>
 							</tr>
 							<tr v-if="type == '1'" v-for="(t,i) in datalist">
 								<td class="padding20">
-									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.albumName}}</td>
-								<td>{{t.createTime | resetTime(t.createTime)}}</td>
-							</tr>
-							<tr v-if="type == '2'" v-for="(t,i) in datalist">
-								<td class="padding20">
-									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.articleTitle}}</td>
+									<div v-bind:class="['rnocheck',t.isActive?'rchecked':'']" v-on:click="selecttab($event,i,t.id)"></div>{{t.name}}</td>
 								<td>{{t.createTime | resetTime(t.createTime)}}</td>
 							</tr>
 						</tbody>
@@ -100,7 +95,8 @@
 			type: ""
 		}
 		loadvue(paras);
-
+		
+//		关联
 		function setpartent() {
 			layer.alert('关联成功', function() {
 				$("#" + rname, window.parent.document).val(rchecktxt);
@@ -108,8 +104,8 @@
 				parent.layer.close(index);
 			});
 		}
-
-		//		加载
+		
+//		加载
 		function loaddata(ri, rn, id) {
 			rindex = ri;
 			rname = rn;
@@ -117,30 +113,30 @@
 			if(rindex == 0) {
 				var paras = {
 					page: page,
-					blur: $("#blur").val()
+					productName: $("#productName").val()
 				};
 				paras = JSON.stringify(paras);
-				crequest('POST', 'melody/queryList.do', 1, paras, function(res) {
+				crequest('POST', 'product/queryList.do', 1, paras, function(res) {
 					setData.type = '0';
-					var datalist = res.data.melodyList;
+					var datalist = res.data;
 					for(var i = 0; i < datalist.length; i++) {
 						datalist[i].isActive = false;
 					}
 					setData.datalist = datalist;
 					setData.currentPage = res.currentPage;
 					setData.pageSize = res.pageSize;
-					setData.datalen = res.data.melodyList.length;
-					judedatalen(res.data.melodyList.length)
+					setData.datalen = res.data.length;
+					judedatalen(res.data.length)
 				}, function() {
-					layer.msg("曲目加载失败");
+					layer.msg("产品加载失败");
 				})
 			} else if(rindex == 1) {
 				var paras = {
 					page: page,
-					blur: $("#blur").val()
+					salerName: $("#salerName").val()
 				};
 				paras = JSON.stringify(paras);
-				crequest('POST', 'album/queryList.do', 1, paras, function(res) {
+				crequest('POST', 'saler/queryList.do', 1, paras, function(res) {
 					setData.type = '1';
 					var datalist = res.data;
 					for(var i = 0; i < datalist.length; i++) {
@@ -152,26 +148,7 @@
 					setData.datalen = res.data.length;
 					judedatalen(res.data.length)
 				}, function() {
-					layer.msg("专辑加载失败");
-				})
-			} else if(rindex == 2) {
-				var paras = {
-					page: page,
-				};
-				paras = JSON.stringify(paras);
-				crequest('POST', 'article/queryList.do', 1, paras, function(res) {
-					setData.type = '2';
-					var datalist = res.data;
-					for(var i = 0; i < datalist.length; i++) {
-						datalist[i].isActive = false;
-					}
-					setData.datalist = datalist;
-					setData.currentPage = res.currentPage;
-					setData.pageSize = res.pageSize;
-					setData.datalen = res.data.length;
-					judedatalen(res.data.length)
-				}, function() {
-					layer.msg("发现加载失败");
+					layer.msg("销售人员加载失败");
 				})
 			}
 		}

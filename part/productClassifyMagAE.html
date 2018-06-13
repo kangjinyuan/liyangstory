@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>果果故事树后台管理系统</title>
+		<title>李扬故事汇后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -23,14 +23,14 @@
 				<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">类别名称</span>：</div>
 					<div class="masklistvalue">
-						<input type="text" name="" value="" id="classifyName" class="required textlength" />
+						<input type="text" name="" value="" id="title" class="required textlength" />
 						<div class="masklist_prompt">不超过15个字</div>
 					</div>
 				</div>
 				<div class="masklist">
-					<div class="masklistname"><span>*</span><span class="text">类别排序</span>：</div>
+					<div class="masklistname"><span class="text">类别排序</span>：</div>
 					<div class="masklistvalue">
-						<input type="text" name="" value="" id="classifyOrder" class="required" />
+						<input type="text" name="" value="" id="sort" class="" />
 						<div class="masklist_prompt">越大越靠前</div>
 					</div>
 				</div>
@@ -41,16 +41,16 @@
 		</div>
 	</body>
 	<script>
-		//		新建classify
+		//		新建
 		function save() {
 			var checkI = checkInput();
 			if(checkI == true) {
 				var paras = {
-					categoryName: $("#classifyName").val(),
-					categorySort: $("#classifyOrder").val()
+					title: $("#title").val(),
+					sort: $("#sort").val()
 				};
 				paras = JSON.stringify(paras);
-				crequest('POST', 'category/add.do', 1, paras, function(res) {
+				crequest('POST', 'productType/add.do', 1, paras, function(res) {
 					layer.alert('新建成功', function() {
 						parent.layer.close(index);
 						window.parent.loaddata();
@@ -60,17 +60,17 @@
 				})
 			}
 		}
-		//		修改数据
+		//		修改
 		function updata() {
 			var checkI = checkInput();
 			if(checkI == true) {
 				var paras = {
 					id: $(".main_mask").attr("data-id"),
-					categoryName: $("#classifyName").val(),
-					categorySort: $("#classifyOrder").val()
+					title: $("#title").val(),
+					sort: $("#sort").val()
 				};
 				paras = JSON.stringify(paras);
-				crequest('POST', 'category/update.do', 1, paras, function(res) {
+				crequest('POST', 'productType/update.do', 1, paras, function(res) {
 					layer.alert('修改成功', function() {
 						parent.layer.close(index);
 						window.parent.loaddata();

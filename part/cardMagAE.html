@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>果果故事树后台管理系统</title>
+		<title>李扬故事汇后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -21,38 +21,34 @@
 		<div class="main_mask">
 			<div class="con">
 				<div class="masklist">
-					<div class="masklistname"><span>*</span><span class="text">产品类别</span>：</div>
+					<div class="masklistname"><span>*</span><span class="text">产品名称</span>：</div>
 					<div class="masklistvalue">
-						<select name="" id="atype" class="required">
-							<option value="">请选择类别</option>
-							<option value="1">vip一个月</option>
-							<option value="2">vip三个月</option>
-							<option value="3">vip一年</option>
-						</select>
+						<input type="text" name="" value="" disabled="disabled" id="productName" />
+						<input type="hidden" name="" value="" id="productId" />
 					</div>
+				</div>
+				<div class="maskbtnbox">
+					<div class="btn" onclick="showcardmaskAE(0,'productName','productId','关联产品');">关联产品</div>
 				</div>
 				<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">生成量</span>：</div>
 					<div class="masklistvalue">
-						<input type="text" name="" value="" id="anum" class="required" />
+						<input type="text" name="" value="" id="count" class="required" />
 					</div>
 				</div>
-				<div class="masklist">
+				<!--<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">手机号</span>：</div>
 					<div class="masklistvalue">
-						<input type="text" name="" value="" class="required phone smallip" />
+						<input type="text" name="" value="" class="phone smallip" />
 					</div>
-				</div>
-				<div class="maskbtnbox">
-					<div class="btn" onclick="sendToken(this)">发送验证码</div>
-				</div>
-				<div class="masklist">
+				</div>-->
+				<!--<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">验证码</span>：</div>
 					<div class="masklistvalue">
 						<input type="text" name="" value="" id="token" class="moneyip" />
 						<div class="masklist_prompt">验证码为6位数字 如：000000</div>
 					</div>
-				</div>
+				</div>-->
 				<div class="maskbtnbox">
 					<div class="btn" onclick="save();" id="creatsave">确定</div>
 				</div>
@@ -60,6 +56,12 @@
 		</div>
 	</body>
 	<script>
+		function showcardmaskAE(rindex, rname, rid, title) {
+			openmask("", "cardmaskAE", title, "96%", "90%", function(layerdom, layerifame) {
+				layerifame[0].contentWindow.loaddata(rindex, rname, rid);
+			});
+		}
+
 		function sendToken(t) {
 			var checkI = checkInput();
 			if(checkI == true) {
@@ -73,24 +75,25 @@
 				}
 			}
 		}
-		//		新建activity
+		//		新建
 		function save() {
 			var checkI = checkInput();
 			if(checkI == true) {
-				if($("#token").val() == "") {
-					layer.msg("验证码不能为空");
-					return false;
-				}
-				if($("#token").val().length != 6) {
-					layer.msg("验证码为6位数字");
-					return false;
-				}
+				//				if($("#token").val() == "") {
+				//					layer.msg("验证码不能为空");
+				//					return false;
+				//				}
+				//				if($("#token").val().length != 6) {
+				//					layer.msg("验证码为6位数字");
+				//					return false;
+				//				}
 				var paras = {
-					categoryName: $("#classifyName").val(),
-					categorySort: $("#classifyOrder").val()
+					productId: $("#productId").val(),
+					count: $("#count").val(),
+					salerId: $("#salerId").val()
 				};
 				paras = JSON.stringify(paras);
-				crequest('POST', 'category/add.do', 1, paras, function(res) {
+				crequest('POST', 'giftcard/generator.do', 1, paras, function(res) {
 					layer.alert('新建成功', function() {
 						parent.layer.close(index);
 						window.parent.loaddata();
@@ -100,14 +103,16 @@
 				})
 			}
 		}
-		//		修改数据
+
+		//		修改
 		function updata() {
 			var checkI = checkInput();
 			if(checkI == true) {
 				var paras = {
 					id: $(".main_mask").attr("data-id"),
-					categoryName: $("#classifyName").val(),
-					categorySort: $("#classifyOrder").val()
+					productName: $("#productName").val(),
+					productNum: $("#productNum").val(),
+					saler: $("#saler").val()
 				};
 				paras = JSON.stringify(paras);
 				crequest('POST', 'category/update.do', 1, paras, function(res) {

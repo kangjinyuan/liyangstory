@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>果果故事树后台管理系统</title>
+		<title>李扬故事汇后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -14,10 +14,15 @@
 		<link rel="stylesheet" href="../css/comment.css" />
 		<script src="../js/jquery-1.9.1.min.js"></script>
 		<script src="../layui/layui.all.js"></script>
-		<script src="../js/jquery.table2excel.min.js"></script>
-		<script src="../js/exportExcel.js"></script>
+		<script src="../js/selectExcel.js"></script>
 		<script src="../js/vue.min.js"></script>
+		<script src="../js/upload.js"></script>
+		<script src="../js/jquery.form.js"></script>
 		<script src="../js/comment.js"></script>
+		<script src="../js/xlsx.core.min.js"></script>
+		<script src="../js/blob.js"></script>
+		<script src="../js/FileSaver.min.js"></script>
+		<script src="../js/tableexport.min.js"></script>
 	</head>
 
 	<body>
@@ -28,13 +33,13 @@
 					<div class="search">
 						<div class="searchname">卡号：</div>
 						<div class="searchvalue">
-							<input type="text" name="" value="" id="blur" placeholder="输入活动关键词" />
+							<input type="text" name="" value="" id="cardNo" placeholder="输入活动关键词" />
 						</div>
 					</div>
 					<div class="search">
 						<div class="searchname">激活状态：</div>
 						<div class="searchvalue">
-							<select name="" id="state" v-on:change="loaddata();">
+							<select name="" id="activeState" v-on:change="query();">
 								<option value="">请选择状态</option>
 								<option value="1">已激活</option>
 								<option value="0">未激活</option>
@@ -44,54 +49,144 @@
 				</div>
 			</div>
 			<div class="btnbox">
-				<div class="btn" onclick="loaddata();">查询</div>
-				<div class="btn" onclick="HtmlExportToExcel('PanelExcel','excelname')">
-					<a id="dlink">导出EXCEL</a>
-				</div>
+				<div class="btn" onclick="query();">查询</div>
+				<div class="btn" onclick="openexcel('',2)">预览制卡EXCEL</div>
 			</div>
 			<div class="KJY_table">
-				<table id="PanelExcel">
+				<table>
 					<thead>
 						<tr>
-							<th>卡号</th>
+							<th class="padding20">
+								<div v-bind:class="['nocheck',allisActive?'checked':'']" v-on:click="allSelectExcel($event)"></div>卡号
+							</th>
+							<th>基因码</th>
 							<th>激活状态</th>
 							<th>生成时间</th>
 						</tr>
 					</thead>
 
 					<tbody id="tbody">
-						<tr v-for="t in datalist">
-							<td>{{t.cardNo}}</td>
+						<tr v-for="(t,i) in datalist">
+							<td class="padding20">
+								<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectExcel($event,i,t.id)"></div>{{t.cardNo}}
+							</td>
+							<td>{{t.geneNo}}</td>
 							<td>{{t.statetxt}}</td>
 							<td>{{t.createTime | resetTime(t.createTime)}}</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
+			<div class="page">
+				<div>每页显示<span>20</span>条记录</div>
+				<div onclick="firstpage(2);">首页</div>
+				<div onclick="beforepage(2);">上一页</div>
+				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
+				<div>共<span id="allpage">{{pageSize}}</span>页</div>
+				<div onclick="nextpage(2);">下一页</div>
+				<div onclick="lastpage(2);">末页</div>
+				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
+			</div>
 		</div>
 	</body>
 	<script>
 		var paras = {
-			datalist: []
+			datalist: [],
+			datalen: "",
+			currentPage: "",
+			count: "",
+			pageSize: "",
+			allisActive: false,
+			type: ''
 		}
 		loadvue(paras);
 
-		function loaddata(cardSerial) {
+		function openexcel(title,flag) {
+			if(t1.length == 0) {
+				layer.msg("请选择检测数据");
+			} else {
+				if(flag == 2){
+					openmask("", "../part/excel", $("#excelname").val(), "90%", "96%", function(layerdom, layerifame) {
+						layerifame[0].contentWindow.loaddata(t1,flag,function(){
+							layerdom.find("#excelname").val($("#excelname").val());
+						});
+					})	
+				}else{
+					openmask("", "../part/excel", title, "90%", "96%", function(layerdom, layerifame) {
+						layerifame[0].contentWindow.loaddata(t1,flag,function(){
+							layerdom.find("#excelname").val(title);
+						});
+					})
+				}
+			}
+		}
+
+		function noreport() {
+			layer.msg("报告未生成，请稍后");
+		}
+
+		function query() {
+			loaddata(cardSerial, type);
+		}
+
+		//		修改数据
+		function updata(cardNo, reportUrl) {
 			var paras = {
-				cardSerial:cardSerial,
-				blur: $("#blur").val(),
-				state:$("#state").val()
+				cardNo: cardNo,
+				reportUrl: reportUrl
 			};
+			paras = JSON.stringify(paras);
+			crequest('POST', 'giftcard/update.do', 1, paras, function(res) {
+				layer.msg("报告上传成功");
+				loaddata(cardSerial, type);
+			}, function() {
+				layer.msg("报告上传失败");
+			})
+		}
+
+		function loaddata(cs, tp) {
+			cardSerial = cs;
+			type = tp;
+			if(type == 0) {
+				setData.type = '0';
+				var paras = {
+					accountId: cardSerial,
+					cardNo: $("#cardNo").val(),
+					activeState: $("#activeState").val(),
+					pageSize: '100'
+				};
+
+			} else if(type == 1) {
+				setData.type = '1';
+				var paras = {
+					cardSerial: cardSerial,
+					cardNo: $("#cardNo").val(),
+					activeState: $("#activeState").val(),
+					pageSize: '100'
+				};
+			}
 			paras = JSON.stringify(paras);
 			crequest('POST', 'giftcard/queryDetailList.do', 1, paras, function(res) {
 				var datalist = res.data;
-				for(var i = 0; i < datalist.length; i++){
-					if(datalist[i].state == 0){
+				for(var i = 0; i < datalist.length; i++) {
+					datalist[i].isActive = false;
+					for(var j = 0; j < t1.length; j++) {
+						if(t1[j].id == datalist[i].id) {
+							datalist[i].isActive = true;
+						}
+					}
+					if(datalist[i].reportUrl == '' || datalist[i].reportUrl == null) {
+						datalist[i].reportUrl = "";
+					} else {
+						datalist[i].reportUrl = url + datalist[i].reportUrl;
+					}
+					if(datalist[i].state == 0) {
 						datalist[i].statetxt = "未激活";
-					}else if(datalist[i].state == 1){
+					} else if(datalist[i].state == 1) {
 						datalist[i].statetxt = "已激活";
 					}
 				}
+				setData.allisActive = false;
 				setData.datalist = datalist;
 				judedatalen(res.data.length)
 			}, function() {

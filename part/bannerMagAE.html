@@ -46,7 +46,7 @@
 					</div>
 				</div>
 				<div class="maskbtnbox">
-					<div class="btn" onclick="showbannermaskAE();">选择关联内容</div>
+					<div class="btn" onclick="showbannermaskAE('bannercon','bannerconid');">选择关联内容</div>
 				</div>
 				<div class="masklist">
 					<div class="masklistname"><span>*</span><span class="text">关联内容</span>：</div>
@@ -74,14 +74,14 @@
 			$("#bannerconid").val("");
 		}
 
-		function showbannermaskAE() {
-			var tabindex = $("#bannertab").val();
-			if(tabindex == "") {
+		function showbannermaskAE(rname, rid) {
+			var rindex = $("#bannertab").val();
+			if(rindex == "") {
 				layer.msg("请选择关联选项");
 				return false;
 			}
 			openmask("", "../part/bannermaskAE", "选择关联", "96%", "90%", function(layerdom, layerifame) {
-				layerifame[0].contentWindow.loaddata(tabindex);
+				layerifame[0].contentWindow.loaddata(rindex, rname, rid);
 			});
 		}
 		//		新建song

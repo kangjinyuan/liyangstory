@@ -21,6 +21,20 @@ function loadvue(paras) {
 			return Y + M + D + h + m + s;
 		}
 	})
+	Vue.filter('resetDayTime', function(time) {
+		if(time == null) {
+			return "";
+		} else {
+			var date = new Date(time);
+			var Y = date.getFullYear() + '-';
+			var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
+			var D = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate()) + ' ';
+			var h = (date.getHours() < 10 ? '0' + (date.getHours()) : date.getHours()) + ':';
+			var m = (date.getMinutes() < 10 ? '0' + (date.getMinutes()) : date.getMinutes()) + ':';
+			var s = (date.getSeconds() < 10 ? '0' + (date.getSeconds()) : date.getSeconds());
+			return Y + M + D;
+		}
+	})
 }
 
 //公共请求方法
@@ -65,8 +79,10 @@ function allselectdata(event) {
 	} else {
 		setData.allisActive = true;
 		for(var i = 0; i < setData.datalist.length; i++) {
-			setData.datalist[i].isActive = true;
-			delidList.push(setData.datalist[i].id);
+			if(setData.datalist[i].isActive == false) {
+				setData.datalist[i].isActive = true;
+				delidList.push(setData.datalist[i].id);
+			}
 		}
 	}
 }
@@ -194,99 +210,68 @@ function getQueryString(key) {
 }
 
 var page = 1;
-//正常页面
-function firstpage() {
-	page = 1;
-	loaddata();
-}
-
-function lastpage() {
-	page = $("#allpage").html();
-	loaddata();
-}
-
-function nextpage() {
-	page = $("#newpage").val();
-	page++;
-	if(page > $("#allpage").html()) {
-		page = $("#allpage").html();
-		layer.msg("页数已到最大");
-	}
-	loaddata();
-}
-
-function beforepage() {
-	page = $("#newpage").val();
-	page--;
-	if(page < 1) {
-		page = 1;
-		layer.msg("页数已到最小");
-	}
-	loaddata();
-}
-
+//卡片
+var cardSerial = ''; //卡号或用户id
+var type = ''; //区分在用户管理查看卡片0还是在卡包管理查看卡片1
 //弹框
-var tabindex = "";
-
-function maskfirstpage() {
+var rindex = ""; //区分弹框是什么内容
+var rname = ""; //上一级页面的名称id
+var rid = ""; //上一级页面的id
+function firstpage(flag) {
 	page = 1;
-	loaddata(tabindex);
+	if(flag == 0) {
+		loaddata();
+	} else if(flag == 1) {
+		loaddata(rindex, rname, rid);
+	} else if(flag == 2) {
+		loaddata(cardSerial, type);
+	}
 }
 
-function masklastpage() {
+function lastpage(flag) {
 	page = $("#allpage").html();
-	loaddata(tabindex);
+	if(flag == 0) {
+		loaddata();
+	} else if(flag == 1) {
+		loaddata(rindex, rname, rid);
+	} else if(flag == 2) {
+		loaddata(cardSerial, type);
+	}
 }
 
-function masknextpage() {
+function nextpage(flag) {
 	page = $("#newpage").val();
 	page++;
 	if(page > $("#allpage").html()) {
 		page = $("#allpage").html();
 		layer.msg("页数已到最大");
+		return false;
 	}
-	loaddata(tabindex);
+	if(flag == 0) {
+		loaddata();
+	} else if(flag == 1) {
+		loaddata(rindex, rname, rid);
+	} else if(flag == 2) {
+		loaddata(cardSerial, type);
+	}
 }
 
-function maskbeforepage() {
+function beforepage(flag) {
 	page = $("#newpage").val();
 	page--;
 	if(page < 1) {
 		page = 1;
 		layer.msg("页数已到最小");
+		return false;
 	}
-	loaddata(tabindex);
+	if(flag == 0) {
+		loaddata();
+	} else if(flag == 1) {
+		loaddata(rindex, rname, rid);
+	} else if(flag == 2) {
+		loaddata(cardSerial, type);
+	}
 }
-
-//		上传歌曲
-function uploadsong() {
-	$("#coversong").attr("action", url + "common/melodyUpload.do");
-	$('#songFile').trigger('click');
-}
-
-function subimtsongBtn() {
-	var loadding = layer.load(0, {
-		shade: [0.1, '#fafafa'],
-		area: ['88px', '88px']
-	});
-	var form = $("#coversong");
-	var timestamp = new Date().getTime();
-	var options = {
-		url: $(form).attr("action"),
-		type: 'post',
-		success: function(data) {
-			if(data.state == true) {
-				$("#showsong").attr("src", url + data.msg + "?timestamp=" + timestamp);
-				$("#song").val($("#songFile").val());
-				$("#songtext").val(data.msg);
-			} else {
-				layer.msg(data.msg);
-			}
-			layer.closeAll('loading');
-		}
-	};
-	form.ajaxSubmit(options);
-};
 
 //ajax内部查看专辑和分类
 function binddata(bindurl, blur, callback) {
@@ -333,6 +318,16 @@ function getTokentime(t) {
 			$(t).html(tt + "S重新发送");
 		}
 	}, 1000);
+}
+
+//导出
+function exportExcel(dom, fileName, layout, colsArr) {
+	dom.tableExport({
+		headings: true,
+		fileName: fileName,
+		formats: layout,
+		ignoreCols: colsArr
+	});
 }
 
 function checkInput() {

@@ -2,7 +2,7 @@
 <html>
 
 	<head>
-		<title>麦瑞康后台管理系统</title>
+		<title>李扬故事汇后台管理系统</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 		<meta name="keywords" content="">
@@ -32,7 +32,7 @@
 					<div class="search">
 						<div class="searchname">产品类别：</div>
 						<div class="searchvalue">
-							<input type="text" name="" value="" id="productName" placeholder="输入产品类别" />
+							<input type="text" name="" value="" id="blur" placeholder="输入产品类别" />
 						</div>
 					</div>
 				</div>
@@ -50,16 +50,18 @@
 								<div v-bind:class="['nocheck',allisActive?'checked':'']" v-on:click="allselectdata($event)"></div>序号</th>
 							<th>产品类别</th>
 							<th>创建时间</th>
+							<th>修改时间</th>
 							<th>操作</th>
 						</tr>
 						<tbody id="tbody">
 							<tr v-for="(t,i) in datalist" v-on:dblclick="seedata(t.id)">
 								<td class="padding20">
-								<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectdata($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}</td>
-								<td>{{t.productName}}</td>
+									<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectdata($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}</td>
+								<td>{{t.title}}</td>
 								<td>{{t.createTime | resetTime(t.createTime)}}</td>
+								<td>{{t.updateTime | resetTime(t.updateTime)}}</td>
 								<td>
-									<div class="btn" v-on:click="seedata(t.id)">编辑</div>
+									<div class="btn" v-on:click="seedata(t)">编辑</div>
 								</td>
 							</tr>
 						</tbody>
@@ -68,12 +70,12 @@
 			</div>
 			<div class="page">
 				<div>每页显示<span>20</span>条记录</div>
-				<div onclick="firstpage();">首页</div>
-				<div onclick="beforepage();">上一页</div>
+				<div onclick="firstpage(0);">首页</div>
+				<div onclick="beforepage(0);">上一页</div>
 				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
 				<div>共<span id="allpage">{{pageSize}}</span>页</div>
-				<div onclick="nextpage();">下一页</div>
-				<div onclick="lastpage();">末页</div>
+				<div onclick="nextpage(0);">下一页</div>
+				<div onclick="lastpage(0);">末页</div>
 				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
 			</div>
 		</div>
@@ -102,21 +104,10 @@
 		}
 
 		//		查看数据
-		function seedata(id) {
-			openmask(id, "../part/productClassifyMagAE", "编辑产品类别", "50%", "46%", function(layerdom, layerifame) {
-				//				layerifame[0].contentWindow.loadselect(function() {
-				//					var paras = {
-				//						id: id
-				//					};
-				//					paras = JSON.stringify(paras);
-				//					var timestamp = new Date().getTime();
-				//					crequest('POST', 'melody/query.do', paras,1, function(res) {
-				//						layerdom.find("#creatsave").attr("onclick", "updata();");
-				//					}, function() {
-				//						layer.msg('加载失败');
-				//					})
-				//				})
-
+		function seedata(obj) {
+			openmask(obj.id, "../part/productClassifyMagAE", "编辑产品类别", "50%", "46%", function(layerdom, layerifame) {
+				layerdom.find("#title").val(obj.title);
+				layerdom.find("#creatsave").attr("onclick", "updata()");
 			})
 		}
 
@@ -131,7 +122,7 @@
 					var paras = {
 						idList: delidList
 					}
-					crequest('POST', 'melody/delete.do', 0, paras, function(res) {
+					crequest('POST', 'productType/delete.do', 0, paras, function(res) {
 						loaddata();
 						layer.closeAll('dialog');
 					}, function() {
@@ -147,11 +138,9 @@
 			var paras = {
 				page: page,
 				blur: $("#blur").val(),
-				productName: $("#productName").val(),
-				productCode: $("#productCode").val()
 			};
 			paras = JSON.stringify(paras);
-			crequest('POST', 'product/queryList.do', 1, paras, function(res) {
+			crequest('POST', 'productType/queryList.do', 1, paras, function(res) {
 				var datalist = res.data;
 				for(var i = 0; i < datalist.length; i++) {
 					datalist[i].isActive = false;

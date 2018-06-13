@@ -44,6 +44,7 @@
 .btnbox{width: 96%;margin:0px auto;overflow: hidden;padding: 8px 0px;}
 .bannerbtnbox{width: 98%;margin:0px auto;overflow: hidden;padding-bottom:8px;}
 .btn{cursor:pointer;padding: 0px 10px;font: 12px/22px 黑体;color: #fff;border-radius:3px;background: #da423d;float: left;margin-right: 10px;}
+.disbtn{cursor:pointer;padding: 0px 10px;font: 12px/22px 黑体;color: #333;border-radius:3px;background: #ccc;float: left;margin-right: 10px;}
 .btn a{font: 12px/22px 黑体;color: #fff;}
 .btnbox .btn:last-child{margin-right: 0px;}
 .btn:hover{background: #da5955;}
