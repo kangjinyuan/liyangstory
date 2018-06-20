@@ -16,23 +16,20 @@
 		<script src="../layui/layui.all.js"></script>
 		<script src="../js/vue.min.js"></script>
 		<script src="../js/comment.js"></script>
-		<script src="../js/xlsx.core.min.js"></script>
-		<script src="../js/blob.js"></script>
-		<script src="../js/FileSaver.min.js"></script>
-		<script src="../js/tableexport.min.js"></script>
+		<script src="../js/jquery.table2excel.min.js"></script>
 	</head>
 
 	<body>
 		<input type="hidden" name="" value="" id="excelname" />
 		<div class="KJYBOX">
 			<div class="btnbox">
-				<div class="btn" v-if="type == 0" v-on:click="eTable('xls','')">
-					导出预览送检详情EXCEL
+				<div class="btn" v-if="type == 0" v-on:click="eTable()">
+					导出预览送检详情
 				</div>
-				<div class="btn" v-if="type == 1" v-on:click="eTable('csv','')">
-					导出预览96孔取样盘数据模板CSV
+				<div class="btn" v-if="type == 1" v-on:click="eTable()">
+					导出预览96孔取样盘数据模板
 				</div>
-				<div class="btn" v-if="type == 2" v-on:click="eTable('xls','')">
+				<div class="btn" v-if="type == 2" v-on:click="eTable()">
 					导出制卡EXCEL
 				</div>
 			</div>
@@ -107,12 +104,10 @@
 		}
 		loadvue(paras);
 		
-		function eTable(layout,cols){
+		function eTable() {
 			var dom = $("#PanelExcel");
 			var fileName = $("#excelname").val();
-			var layout = [layout];
-			var colsArr = cols.split(',');
-			exportExcel(dom,fileName,layout,colsArr)
+			exportExcel(dom,fileName)
 		}
 		
 		function loaddata(tarr, flag, callback) {

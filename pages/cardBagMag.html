@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>李扬故事汇后台管理系统</title>
+		<title>果果故事树后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -27,13 +27,7 @@
 					<div class="search">
 						<div class="searchname">产品名称：</div>
 						<div class="searchvalue">
-							<input type="text" name="" value="" id="productName" />
-						</div>
-					</div>
-					<div class="search">
-						<div class="searchname">销售人员：</div>
-						<div class="searchvalue">
-							<input type="text" name="" value="" id="salerName" />
+							<input type="text" name="" value="" id="productName" placeholder="输入产品名称" />
 						</div>
 					</div>
 				</div>
@@ -67,7 +61,7 @@
 							<tr v-for="(t,i) in datalist">
 								<td>{{((currentPage-1)*20)+(i+1)}}</td>
 								<td>{{t.productName}}</td>
-								<td></td>
+								<td>{{t.activeCount}}</td>
 								<td>{{t.count}}</td>
 								<td>{{t.createTime | resetTime(t.createTime)}}</td>
 								<td>

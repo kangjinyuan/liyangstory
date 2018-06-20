@@ -3,7 +3,7 @@
 
 	<head>
 		<meta charset="utf-8">
-		<title>李扬故事汇后台管理系统</title>
+		<title>果果故事树后台管理系统</title>
 		<meta name="keywords" content="">
 		<meta name="description" content="">
 		<meta http-equiv="Pragma" content="no-cache">
@@ -19,10 +19,6 @@
 		<script src="../js/upload.js"></script>
 		<script src="../js/jquery.form.js"></script>
 		<script src="../js/comment.js"></script>
-		<script src="../js/xlsx.core.min.js"></script>
-		<script src="../js/blob.js"></script>
-		<script src="../js/FileSaver.min.js"></script>
-		<script src="../js/tableexport.min.js"></script>
 	</head>
 
 	<body>
@@ -33,7 +29,7 @@
 					<div class="search">
 						<div class="searchname">卡号：</div>
 						<div class="searchvalue">
-							<input type="text" name="" value="" id="cardNo" placeholder="输入活动关键词" />
+							<input type="text" name="" value="" id="cardNo" placeholder="输入卡号" />
 						</div>
 					</div>
 					<div class="search">
@@ -57,9 +53,9 @@
 					<thead>
 						<tr>
 							<th class="padding20">
-								<div v-bind:class="['nocheck',allisActive?'checked':'']" v-on:click="allSelectExcel($event)"></div>卡号
+								<div v-bind:class="['nocheck',allisActive?'checked':'']" v-on:click="allSelectExcel($event)"></div>序号
 							</th>
-							<th>基因码</th>
+							<th>卡号</th>
 							<th>激活状态</th>
 							<th>生成时间</th>
 						</tr>
@@ -68,9 +64,9 @@
 					<tbody id="tbody">
 						<tr v-for="(t,i) in datalist">
 							<td class="padding20">
-								<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectExcel($event,i,t.id)"></div>{{t.cardNo}}
+								<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectExcel($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}
 							</td>
-							<td>{{t.geneNo}}</td>
+							<td>{{t.cardNo}}</td>
 							<td>{{t.statetxt}}</td>
 							<td>{{t.createTime | resetTime(t.createTime)}}</td>
 						</tr>
@@ -103,7 +99,7 @@
 
 		function openexcel(title,flag) {
 			if(t1.length == 0) {
-				layer.msg("请选择检测数据");
+				layer.msg("请选择数据");
 			} else {
 				if(flag == 2){
 					openmask("", "../part/excel", $("#excelname").val(), "90%", "96%", function(layerdom, layerifame) {
@@ -150,19 +146,19 @@
 			if(type == 0) {
 				setData.type = '0';
 				var paras = {
+					page:page,
 					accountId: cardSerial,
 					cardNo: $("#cardNo").val(),
-					activeState: $("#activeState").val(),
-					pageSize: '100'
+					activeState: $("#activeState").val()
 				};
 
 			} else if(type == 1) {
 				setData.type = '1';
 				var paras = {
+					page:page,
 					cardSerial: cardSerial,
 					cardNo: $("#cardNo").val(),
-					activeState: $("#activeState").val(),
-					pageSize: '100'
+					activeState: $("#activeState").val()
 				};
 			}
 			paras = JSON.stringify(paras);
@@ -186,8 +182,19 @@
 						datalist[i].statetxt = "已激活";
 					}
 				}
-				setData.allisActive = false;
+				for(var i = 0; i < datalist.length; i++) {
+					if(datalist[i].isActive == true){
+						setData.allisActive = true;
+					}else{
+						setData.allisActive = false;
+						break;
+					}
+				}
 				setData.datalist = datalist;
+				setData.currentPage = res.currentPage;
+				setData.count = res.count;
+				setData.pageSize = res.pageSize;
+				setData.datalen = res.data.length;
 				judedatalen(res.data.length)
 			}, function() {
 				layer.msg("卡片加载失败")

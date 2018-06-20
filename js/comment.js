@@ -1,4 +1,6 @@
 var url = "https://admin.liyangstory.com/";
+//var url = "http://10.96.155.106:8080/storytree/";
+//var url = "http://47.92.159.107:8080/";
 var setData;
 var index = parent.layer.getFrameIndex(window.name);
 //初始化vue
@@ -321,12 +323,14 @@ function getTokentime(t) {
 }
 
 //导出
-function exportExcel(dom, fileName, layout, colsArr) {
-	dom.tableExport({
-		headings: true,
-		fileName: fileName,
-		formats: layout,
-		ignoreCols: colsArr
+function exportExcel(dom, fileName) {
+	dom.table2excel({
+		exclude: ".noExl",
+		name: "Excel Document Name",
+		filename: fileName,
+		exclude_img: true,
+		exclude_links: true,
+		exclude_inputs: true
 	});
 }
 

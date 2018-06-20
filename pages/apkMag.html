@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>李扬故事汇后台管理系统</title>
+		<meta name="keywords" content="">
+		<meta name="description" content="">
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0">
+		<link rel="shortcut icon" href="../img/icon.png" type="image/x-icon" />
+		<link rel="stylesheet" href="../css/reset.css" />
+		<link rel="stylesheet" href="../css/comment.css" />
+		<script src="../js/jquery-1.9.1.min.js"></script>
+		<script src="../layui/layui.all.js"></script>
+		<script src="../js/vue.min.js"></script>
+		<script src="../js/comment.js"></script>
+	</head>
+
+	<body>
+		<div class="KJYBOX">
+			<div class="KJY_title">apk管理</div>
+			<div class="searchbox">
+				<div class="search_text">
+					<div class="search">
+						<div class="searchname">版本号：</div>
+						<div class="searchvalue">
+							<input type="text" name="" value="" id="version" placeholder="输入版本号" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btnbox">
+				<div class="btn" onclick="loaddata();">查询</div>
+				<div class="btn" onclick="showmask(this,'新建apk');">新建apk</div>
+				<div class="btn" onclick="deldata();">删除</div>
+			</div>
+			<div class="KJY_table">
+				<table>
+					<thead>
+						<tr>
+							<th class="padding20">
+								<div v-bind:class="['nocheck',allisActive?'checked':'']" v-on:click="allselectdata($event)"></div>序号</th>
+							<th>版本号</th>
+							<th>版本描述</th>
+							<th>创建时间</th>
+							<th>修改时间</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+
+					<tbody id="tbody">
+						<tr v-for="(t,i) in datalist">
+							<td class="padding20">
+								<div v-bind:class="['nocheck',t.isActive?'checked':'']" v-on:click="selectdata($event,i,t.id)"></div>{{((currentPage-1)*20)+(i+1)}}</td>
+							<td>{{t.version}}</td>
+							<td>{{t.description}}</td>
+							<td>{{t.createTime | resetTime(t.createTime)}}</td>
+							<td>{{t.updateTime | resetTime(t.updateTime)}}</td>
+							<td>
+								<div class="btn" v-on:click="seedata(t.id)">编辑</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="page">
+				<div>每页显示<span>20</span>条记录</div>
+				<div onclick="firstpage(0);">首页</div>
+				<div onclick="beforepage(0);">上一页</div>
+				<div class="pageinput">第<input type="text" name="" v-bind:value="currentPage" id="newpage" />页</div>
+				<div>共<span id="allpage">{{pageSize}}</span>页</div>
+				<div onclick="nextpage(0);">下一页</div>
+				<div onclick="lastpage(0);">末页</div>
+				<div class="pagedir">当前显示<span>{{(currentPage-1)*20+1}}</span>-<span id="enddata">{{(currentPage-1)*20+datalen}}</span>条记录,共<span>{{count}}</span>条记录</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		var paras = {
+			datalist: [],
+			datalen: "",
+			currentPage: "",
+			count: "",
+			pageSize: "",
+			allisActive: false
+		}
+		loadvue(paras);
+		//		新建弹出
+		function showmask(t, title) {
+			openmask("", "../part/apkMagAE", title, "50%", "60%", function(layerdom, layerifame) {
+				layerdom.find("#creatsave").attr("onclick", "edit(0)");
+			})
+		}
+
+		//		查看数据
+		function seedata(id) {
+			openmask(id, "../part/apkMagAE", "编辑apk", "50%", "60%", function(layerdom, layerifame) {
+				var paras = {
+					id: id
+				};
+				paras = JSON.stringify(paras);
+				var timestamp = new Date().getTime();
+				crequest('POST', 'app/query.do', 1, paras, function(res) {
+					layerdom.find("#version").val(res.data.version);
+					layerdom.find("#description").val(res.data.description);
+					layerdom.find("#fileName").val(url + res.data.url);
+					layerdom.find("#filetext").val(res.data.url);
+					layerdom.find("#creatsave").attr("onclick", "edit(1)");
+				}, function() {
+					layer.msg("查看apk失败");
+				})
+			})
+		}
+		//删除数据
+		function deldata() {
+			if(delidList.length == 0) {
+				layer.msg("请选择要删除的数据");
+			} else {
+				layer.confirm('确定要删除此条数据吗？', {
+					btn: ['确定', '取消']
+				}, function() {
+					var paras = {
+						idList: delidList
+					}
+					crequest('POST', 'app/delete.do', 0, paras, function(res) {
+						loaddata();
+						layer.closeAll('dialog');
+					}, function() {
+						layer.msg("删除失败");
+					})
+				}, function() {
+
+				});
+			}
+		}
+
+		function loaddata() {
+			var paras = {
+				page: page,
+				version: $("#version").val()
+			};
+			paras = JSON.stringify(paras);
+			crequest('POST', 'app/queryList.do', 1, paras, function(res) {
+				var datalist = res.data;
+				for(var i = 0; i < datalist.length; i++) {
+					datalist[i].isActive = false;
+					datalist[i].apkUrl = url + datalist[i].apkUrl;
+				}
+				setData.allisActive = false;
+				setData.datalist = datalist;
+				setData.currentPage = res.currentPage;
+				setData.count = res.count;
+				setData.pageSize = res.pageSize;
+				setData.datalen = res.data.length;
+				judedatalen(res.data.length)
+			}, function() {
+				layer.msg("专辑加载失败");
+			})
+		}
+		loaddata();
+	</script>
+
+</html>

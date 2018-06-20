@@ -49,7 +49,6 @@ function subimtsongBtn() {
 		success: function(data) {
 			if(data.state == true) {
 				$("#showsong").attr("src", url + data.msg + "?timestamp=" + timestamp);
-				$("#song").val($("#songFile").val());
 				$("#songtext").val(data.msg);
 				$("#songFile").val('');
 			} else {
@@ -64,7 +63,9 @@ function subimtsongBtn() {
 //		上传文件
 function uploadfile(cardNo) {
 	$("#report").attr("action", url + "common/fileUpload.do");
-	$("#report").attr("data-cardNo", cardNo);
+	if(cardNo) {
+		$("#report").attr("data-cardNo", cardNo);
+	}
 	$('#reprotFile').trigger('click');
 }
 
@@ -81,7 +82,10 @@ function subimtfileBtn(type) {
 		success: function(data) {
 			if(data.state == true) {
 				if(type == 0) {
-					updata($("#report").attr("data-cardNo"),data.msg);
+					updata($("#report").attr("data-cardNo"), data.msg);
+				} else if(type == 1) {
+					$("#filetext").val(data.msg);
+					$("#fileName").val(url + data.msg);
 				}
 				$("#reprotFile").val('');
 			} else {
