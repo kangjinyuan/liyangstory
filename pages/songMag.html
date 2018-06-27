@@ -19,6 +19,10 @@
 		<link rel="stylesheet" href="../css/comment.css" />
 		<script src="../js/jquery-1.9.1.min.js"></script>
 		<script src="../layui/layui.all.js"></script>
+		<script src="../js/aes.js"></script>
+		<script src="../js/aesinit.js"></script>
+		<script src="../js/mode-ecb-min.js"></script>
+		<script src="../js/pad-nopadding-min.js"></script>
 		<script src="../js/jquery.qrcode.js"></script>
 		<script src="../js/utf.js"></script>
 		<script src="../js/vue.min.js"></script>
@@ -136,8 +140,10 @@
 			openmask("", "../part/songMagAE", title, "60%", "100%", function(layerdom, layerifame) {
 				layerifame[0].contentWindow.loadselect(function() {
 					layerdom.find("#creatsave").attr("onclick", "save();");
-					layerdom.find("#QRCodebox").hide()
-					layerdom.find("#QRCode").empty();
+					layerdom.find("#shareEwmbox").hide()
+					layerdom.find("#shareEwm").empty();
+					layerdom.find("#hbEwmbox").hide()
+					layerdom.find("#hbEwm").empty();
 				})
 			})
 		}
@@ -170,10 +176,19 @@
 						layerdom.find("#showsong").attr("src", url + res.data.melodyFilePath);
 						layerdom.find("#songtext").val(res.data.melodyFilePath);
 						layerdom.find("#creatsave").attr("onclick", "updata();");
-						layerdom.find("#QRCodesave").show();
-						layerdom.find("#QRCode").qrcode({
+						layerdom.find("#shareEwmbox").show();
+						layerdom.find("#hbEwmbox").show();
+						layerdom.find("#shareEwm").qrcode({
 							render: "canvas",
 							text: url + "share/player.html?melodyId=" + res.data.id + "&melodyAlbum=" + res.data.melodyAlbum,
+							width: "100", //二维码的宽度
+							height: "100", //二维码的高度
+							background: "#ffffff", //二维码的后景色
+							foreground: "#000000", //二维码的前景色
+						});
+						layerdom.find("#hbEwm").qrcode({
+							render: "canvas",
+							text: aesEncrypt("mediaType=0&mediaId=" + res.data.id, ewmKey),
 							width: "100", //二维码的宽度
 							height: "100", //二维码的高度
 							background: "#ffffff", //二维码的后景色

@@ -123,12 +123,21 @@
 					<div class="btn" onclick="resetmask();">重填</div>
 					<div class="btn" onclick="save();" id="creatsave">确定</div>
 				</div>
-				<div class="maskbtnbox" id="QRCodebox">
-					<div id="QRCode"></div>
+				<div class="maskbtnbox" id="shareEwmbox">
+					<div id="shareEwm"></div>
 					<div>
 						<a id="download" download=""></a>
 						<div class="maskbtnbox" style="width: 100%;">
-							<div class="btn margintop8" onclick="downerweima();">下载二维码</div>
+							<div class="btn margintop8" onclick="downerweima('shareEwm','Name','分享二维码');">下载分享二维码</div>
+						</div>
+					</div>
+				</div>
+				<div class="maskbtnbox" id="hbEwmbox">
+					<div id="hbEwm"></div>
+					<div>
+						<a id="download" download=""></a>
+						<div class="maskbtnbox" style="width: 100%;">
+							<div class="btn margintop8" onclick="downerweima('hbEwm','Name','绘本二维码');">下载绘本二维码</div>
 						</div>
 					</div>
 				</div>
@@ -136,10 +145,10 @@
 		</div>
 	</body>
 	<script>
-		function downerweima() {
-			var canvas = $('#QRCode').find("canvas").get(0);
+		function downerweima(canvas, name, type) {
+			var canvas = $('#' + canvas).find("canvas").get(0);
 			var saveurl = canvas.toDataURL('image/png');
-			$("#download").attr("download", $("#Name").val());
+			$("#download").attr("download", $("#" + name).val() + type);
 			$("#download").attr('href', saveurl).get(0).click();
 			return false;
 		}

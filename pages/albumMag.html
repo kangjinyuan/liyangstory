@@ -14,6 +14,12 @@
 		<link rel="stylesheet" href="../css/comment.css" />
 		<script src="../js/jquery-1.9.1.min.js"></script>
 		<script src="../layui/layui.all.js"></script>
+		<script src="../js/aes.js"></script>
+		<script src="../js/aesinit.js"></script>
+		<script src="../js/mode-ecb-min.js"></script>
+		<script src="../js/pad-nopadding-min.js"></script>
+		<script src="../js/jquery.qrcode.js"></script>
+		<script src="../js/utf.js"></script>
 		<script src="../js/vue.min.js"></script>
 		<script src="../js/comment.js"></script>
 	</head>
@@ -112,6 +118,8 @@
 			openmask("", "../part/albumMagAE", title, "50%", "95%", function(layerdom, layerifame) {
 				layerifame[0].contentWindow.loadselect(function() {
 					layerdom.find("#creatsave").attr("onclick", "save()");
+					layerdom.find("#hbEwmbox").hide()
+					layerdom.find("#hbEwm").empty();
 				});
 			})
 		}
@@ -134,6 +142,15 @@
 						layerdom.find("#showImage").attr("src", url + res.data.albumCoverImage + "?timestamp=" + timestamp);
 						layerdom.find("#showImage").attr("alt", res.data.albumCoverImage);
 						layerdom.find("#creatsave").attr("onclick", "updata()");
+						layerdom.find("#hbEwmbox").show();
+						layerdom.find("#hbEwm").qrcode({
+							render: "canvas",
+							text: aesEncrypt("mediaType=1&mediaId=" + res.data.id, ewmKey),
+							width: "100", //二维码的宽度
+							height: "100", //二维码的高度
+							background: "#ffffff", //二维码的后景色
+							foreground: "#000000", //二维码的前景色
+						});
 					}, function() {
 						layer.msg("查看专辑失败");
 					})
